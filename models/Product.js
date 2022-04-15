@@ -12,7 +12,7 @@ const product = new mongoose.Schema({
         
     }, 
     weight: {
-        type: Number,
+        type: String,
         required: true,
       
     }, 
@@ -21,11 +21,10 @@ const product = new mongoose.Schema({
         required: true,
       
     }, 
-    url: {
+    url: [{
         type: String,
         required: true,
-        
-    }, 
+    }], 
     main_url: {
         type: String,
         required: true,
