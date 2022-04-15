@@ -5,9 +5,17 @@ const userSchema = new mongoose.Schema({
         type : String ,
         required : true ,
     }, 
+    email : {
+        type : String ,
+        required : true,
+    },
+    password : {
+        type : String ,
+        required : true
+    },
     surname : {
         type : String ,
-        required : true ,
+        // required : true ,
     }, 
     user_name : {
         type : String ,
@@ -20,23 +28,23 @@ const userSchema = new mongoose.Schema({
     }, 
     phone : {
         type : Number ,
-        required : true ,
+        // required : true ,
     },
     address1 : {
         type : String ,
-        required : true ,
+        // required : true ,
     },
     address2 : {
         type : String ,
-        required : true ,
+        // required : true ,
     }, 
     pincode : {
         type : Number ,
-        required : true ,
+        // required : true ,
     },
     country : {
         type : String ,
-        required : true ,
+        // required : true ,
         default:"India",
     },
     is_admin : {
