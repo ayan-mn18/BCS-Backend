@@ -16,7 +16,7 @@ app.use(bd.urlencoded({extended : false}));
 app.use(bd.json());
 
 app.get('/' ,(req,res) =>{
-    res.send('Hello');
+    res.send('Hello Innitial App');
 });
 
 app.listen(PORT , () =>{
