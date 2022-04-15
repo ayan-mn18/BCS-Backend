@@ -13,12 +13,9 @@ const order = new mongoose.Schema({
     }, 
     payment_done: {
         type: Boolean,
-       
-      
     }, 
     payment_details: {
         type: String,
-    
     }, 
 
     

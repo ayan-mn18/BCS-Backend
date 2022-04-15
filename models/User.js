@@ -47,14 +47,14 @@ const userSchema = new mongoose.Schema({
         type : String ,
         
     },
-    previous_orders : {
-        type : Array,
-        required : true ,
-    },
-    cart_items : {
-        type : Array ,
-        required : true ,
-    },
+    previous_orders : [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Order',
+    }],
+    cart_items :[{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Cart',
+    }],
 })
 
 const User = mongoose.model("User" ,userSchema);
