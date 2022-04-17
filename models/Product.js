@@ -16,18 +16,18 @@ const product = new mongoose.Schema({
         required: true,
       
     }, 
-    featured_product_id: {
-        type: Array,
-        required: true,
+    featured_product_id: [{
+        type: String,
+        // required: true,
       
-    }, 
+    }], 
     url: [{
         type: String,
-        required: true,
+        // required: true,
     }], 
     main_url: {
         type: String,
-        required: true,
+        // required: true,
         
     },
     price: {

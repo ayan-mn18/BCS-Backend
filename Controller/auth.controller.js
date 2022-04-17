@@ -51,8 +51,28 @@ const loginUser = async (req,res) =>{
         )
     }
 }
+const alluser=async (req,res)=>{
+    try{
+        const user=await User.find();
+        successMessage(
+            res,
+            "Messgae",
+            user,
+        );
+    }
+    catch(error){
+        errorMessage(
+            res,
+            "message",
+            error,
+
+        );
+
+    }
+}
 
 module.exports = {
     registerUser,
     loginUser,
+    alluser,
 }
