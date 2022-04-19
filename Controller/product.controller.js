@@ -1,5 +1,8 @@
 const { Product } = require("../models");
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
+const path = require("path");
+const { cloudinary } = require("../Utils/cloudinary");
+
 
 const getProduct=async (req,res,)=>{
     
@@ -25,6 +28,10 @@ const getProduct=async (req,res,)=>{
 const addProduct=async (req,res,)=>{
     
     try{
+        
+        const result=await cloudinary.v2.uploader.upload(req.file.path);
+        console.log(result);
+
         const addedProduct=await Product.create(req.body);
         successMessage(
             res,
@@ -46,7 +53,11 @@ const getProductById=async (req,res,)=>{
     
     try{
         const id=req.params.uid;
-        const gotproductById=await Product.findById(id);
+        const gotproductById=await Product.findById({'_id':id});
+        if (!gotproductById) {
+            return res.status(404).json({ message: "Resource not found" });
+          }
+          
         successMessage(
             res,
             "Product found",
@@ -67,7 +78,11 @@ const deleteProductById=async (req,res,)=>{
     
     try{
         const id=req.params.uid;
-        const delProductById=await Product.findOneAndDelete({id});
+        const delProductById=await Product.findByIdAndDelete({'_id':id});
+        if (!delProductById) {
+            return res.status(404).json({ message: "Resource not found" });
+          }
+        
         successMessage(
             res,
             "Product found",

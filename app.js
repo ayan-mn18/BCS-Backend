@@ -5,6 +5,9 @@ const colors = require('colors');
 const dotenv = require('dotenv');
 const { db, isAuthenticated } = require('./Config');
 const router = require('./Routes');
+const cloudinary  = require('cloudinary');
+
+
 
 dotenv.config();
 

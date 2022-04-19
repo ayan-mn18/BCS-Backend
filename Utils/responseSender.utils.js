@@ -6,10 +6,11 @@ const successMessage = (res , message , data , status="SUCCESS" , statusCode = 2
     })
 }
 
-const errorMessage = (res , message , data , error , status="ERROR" , statusCode = 400  ) =>{
+const errorMessage = (res , message ,error, data  , status="ERROR" , statusCode = 400  ) =>{
+    console.log(error)
     return res.status(statusCode).json({
         status : status ,
-        difficulty : error?.message ,
+        difficulty : error.message ,
         message : message,
         data : data 
     })
