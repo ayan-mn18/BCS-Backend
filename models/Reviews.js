@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
+const Product = require('./Product');
+const User = require('./User');
 
 const reviews = new mongoose.Schema({
-    review: {
+    rating: {
         type: Number,
         required: true,
         min: 1,
@@ -13,8 +15,14 @@ const reviews = new mongoose.Schema({
         
     }, 
     product_id: {
-        type: Number,
-        required: true,
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Product',
+        
+      
+    }, 
+    user_id: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'User',
       
     }, 
 })

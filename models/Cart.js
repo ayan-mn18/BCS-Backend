@@ -13,7 +13,11 @@ const carts = new mongoose.Schema({
         },
         user_id : {
 
-        }
+        },
+        featured_product_id:{
+
+
+        },
     }],
     total_cart_price : {
 

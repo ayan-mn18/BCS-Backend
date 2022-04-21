@@ -1,7 +1,15 @@
 const { Product } = require("../models");
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
-const path = require("path");
+const {path} = require("path");
 const { cloudinary } = require("../Utils/cloudinary");
+
+const {uploader} =require('../Utils/multer')
+
+cloudinary.config({ 
+    cloud_name: 'ragapo9908-arpizol-com', 
+    api_key: '318232892684871', 
+    api_secret: 'mieHZeKO73XkEvfGIodeAzJ6BvY' 
+  });
 
 
 const getProduct=async (req,res,)=>{
@@ -9,6 +17,11 @@ const getProduct=async (req,res,)=>{
     try{
         
         const gotproduct=await Product.find();
+        console.log(gotproduct)
+        if(gotproduct.length==0){
+            return res.status(404).json({ message: "There Is no product Please add some product"});
+        }
+
         successMessage(
             res,
             "Product found",
@@ -18,7 +31,7 @@ const getProduct=async (req,res,)=>{
     catch(error){
         errorMessage(
             res,
-            "Product not found!!",
+            "Product not found!!", 
             error,
 
         );
@@ -29,7 +42,7 @@ const addProduct=async (req,res,)=>{
     
     try{
         
-        const result=await cloudinary.v2.uploader.upload(req.file.path);
+        const result=await cloudinary.uploader.upload(req.file.path);
         console.log(result);
 
         const addedProduct=await Product.create(req.body);
