@@ -7,21 +7,19 @@ const { cloudinary } = require("../Utils/cloudinary");
 const {uploader} =require('../Utils/multer');
 const is_Admin = require("../Config/isAdmin.config");
 
-cloudinary.config({ 
-    cloud_name: 'ragapo9908-arpizol-com', 
-    api_key: '318232892684871', 
-    api_secret: 'mieHZeKO73XkEvfGIodeAzJ6BvY' 
-  });
-
 
 const getProduct=async (req,res,)=>{
     
     try{
         
-        const gotproduct=await Product.find();
+        const gotproduct = await Product.find();
 
         if(gotproduct.length==0){
-            return res.status(404).json({ message: "There Is no product Please add some product"});
+            errorMessage(
+                res,
+                "THERE ARE NO PRODUCTS IN THE DATABASE",
+                data = gotproduct,
+            )
         }
 
         successMessage(
@@ -35,23 +33,32 @@ const getProduct=async (req,res,)=>{
             res,
             "Product not found!!", 
             error,
-
         );
 
     }
-}
+};
+
 const addProduct=async (req,res,)=>{
     
     try{
         
-        const result=await cloudinary.uploader.upload(req.file.path);
-        console.log(result);
+        const result = await cloudinary.uploader.upload(req.file.path);
 
-        const addedProduct=await Product.create(req.body);
+        console.log(result);
+        if(!result?.secure_url){
+            errorMessage(
+                res,
+                "Photo Didnt Upload , Try Again ! ",
+                result,
+            )
+        }
+        let data = req.body;
+        data.main_url = result?.secure_url ;
+        const addedProduct = await Product.create(data);
         successMessage(
             res,
             "Product added",
-            addedProduct,
+            data = addedProduct,
         );
     }
     catch(error){
@@ -59,24 +66,26 @@ const addProduct=async (req,res,)=>{
             res,
             "error",
             error,
-
         );
-
     }
-}
+};
+
 const getProductById=async (req,res,)=>{
     
     try{
-        const id=req.params.uid;
+        const id = req.params.pid ;
         const gotproductById=await Product.findById({'_id':id});
         if (!gotproductById) {
-            return res.status(404).json({ message: "Resource not found" });
-          }
-          
+            errorMessage(
+                res,
+                `DINNT FIND ANY PRODUCT WITH PRODUCT ID ${id}`,
+                data = gotproductById ,
+            )
+        }
         successMessage(
             res,
             "Product found",
-            gotproductById,
+            data = gotproductById,
         );
     }
     catch(error){
@@ -88,11 +97,12 @@ const getProductById=async (req,res,)=>{
         );
 
     }
-}
+};
+
 const deleteProductById=async (req,res,)=>{
     
     try{
-        const id=req.params.uid;
+        const id=req.params.pid;
         const delProductById=await Product.findByIdAndDelete({'_id':id});
         if (!delProductById) {
             return res.status(404).json({ message: "Resource not found" });
@@ -113,11 +123,16 @@ const deleteProductById=async (req,res,)=>{
         );
 
     }
-}
+};
+
 const updateProductById=async (req,res,)=>{
     
     try{
-        const id=req.params.uid;
+        const id=req.params.pid;
+        // if(req.file.path){
+
+        // }
+        //CHECK PHOTO UPDATE CODE .
         const updates=req.body;
         const options={new:true}
         const updatedProduct=await Product.findByIdAndUpdate(id,updates,options);
@@ -136,7 +151,7 @@ const updateProductById=async (req,res,)=>{
         );
 
     }
-}
+};
 
 
 
@@ -147,7 +162,6 @@ module.exports={
     getProductById,
     deleteProductById,
     updateProductById
-    
 }
 
 

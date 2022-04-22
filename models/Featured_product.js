@@ -21,11 +21,15 @@ const featured_product = new mongoose.Schema({
         required: true,
       
     }, 
-    reviews: {
-        type: Array,
+    reviews: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Review',
       
-    }, 
-
+    }], 
+    url: [{
+        type: String,
+        // required: true,
+    }], 
     
 })
 

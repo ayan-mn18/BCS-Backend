@@ -10,10 +10,10 @@ const router = express.Router();
 
 
 router.get('/getproduct',isAuthenticated,is_Admin,getProduct);
-router.get('/:uid',isAuthenticated,is_Admin,getProductById);
+router.get('/:pid',isAuthenticated,getProductById);
 router.post('/addproduct',isAuthenticated,is_Admin,upload.single('image'),addProduct);
-router.delete('/:uid',isAuthenticated,is_Admin,deleteProductById);
-router.patch('/:uid',isAuthenticated,is_Admin,updateProductById)
+router.delete('/:pid',isAuthenticated,is_Admin,deleteProductById);
+router.patch('/:pid',isAuthenticated,is_Admin,upload.single('image'),updateProductById)
 
 
 

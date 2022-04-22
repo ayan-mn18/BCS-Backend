@@ -17,9 +17,8 @@ const product = new mongoose.Schema({
       
     }, 
     featured_product_id: [{
-        type: String,
-        // required: true,
-      
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Featured_Product',
     }], 
     url: [{
         type: String,
