@@ -160,7 +160,7 @@ const getReviewsByUserId= async (req,res)=>{
         
         
         
-        if (!gotreviewById) {
+        if (!gotreviewById.length) {
             return res.status(404).json({ message: "Resource not found" });
           }
           

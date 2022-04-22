@@ -1,7 +1,7 @@
 const { User } = require("../models");
 
-const isAdmin = (req, res, next) => {
-	if (req.user && req.user.isAdmin) {
+const is_Admin = (req, res, next) => {
+	if (req.user && req.user.is_admin) {
 		req.admin = true ;
 		next();
 	}
@@ -11,4 +11,4 @@ const isAdmin = (req, res, next) => {
 	}
 };
 
-module.exports= isAdmin;
+module.exports= is_Admin;

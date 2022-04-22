@@ -3,7 +3,9 @@ const { successMessage, errorMessage } = require("../Utils/responseSender.utils"
 const {path} = require("path");
 const { cloudinary } = require("../Utils/cloudinary");
 
-const {uploader} =require('../Utils/multer')
+
+const {uploader} =require('../Utils/multer');
+const is_Admin = require("../Config/isAdmin.config");
 
 cloudinary.config({ 
     cloud_name: 'ragapo9908-arpizol-com', 
@@ -17,7 +19,7 @@ const getProduct=async (req,res,)=>{
     try{
         
         const gotproduct=await Product.find();
-        console.log(gotproduct)
+
         if(gotproduct.length==0){
             return res.status(404).json({ message: "There Is no product Please add some product"});
         }
