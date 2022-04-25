@@ -3,15 +3,16 @@ const { successMessage, errorMessage } = require("../Utils/responseSender.utils"
 const {path} = require("path");
 const { cloudinary } = require("../Utils/cloudinary");
 
-const getCart=async (req,res,)=>{
+
+const getAllCarts=async (req,res,)=>{
     
     try{
         
-        id=req.params.cid
-        const gotCart = await Product.findById(id);
+        
+        const gotCart = await Cart.find();
 
-        if(!gotCart){
-            return res.status(404).json({ message: "Nothing In Ca" });
+        if(!gotCart.length){
+            return res.status(404).json({ message: "Nothing In Cart" });
         }
 
         successMessage(
@@ -23,7 +24,34 @@ const getCart=async (req,res,)=>{
     catch(error){
         errorMessage(
             res,
-            "Product not found!!", 
+            "Nothing In Cart!!!", 
+            error,
+        );
+
+    }
+};
+
+const getCart=async (req,res,)=>{
+    
+    try{
+        
+        id=req.params.cid
+        const gotCart = await Cart.findById(id);
+
+        if(!gotCart){
+            return res.status(404).json({ message: "Nothing In Cart please check id" });
+        }
+
+        successMessage(
+            res,
+            "Product Found In cart",
+            gotCart,
+        );
+    }
+    catch(error){
+        errorMessage(
+            res,
+            "Nothing In Cart!!!", 
             error,
         );
 
@@ -31,26 +59,33 @@ const getCart=async (req,res,)=>{
 };
 
 
-const addToCart=async (req,res,)=>{
+const createCart=async (req,res,)=>{
     try{
-        const product_id = req.params.pid
+        const prid = req.params.pid
+        console.log(req.body)
+        data={
+            
+            cart_items:[{featured_product_id : req.params.fpid,
+            product_id:prid,
+            quantity:req.body.quantity,
+            price_of_this_item:req.body.price_of_this_item,}],
+            user_id:req.user._id,
+            total_cart_price: (req.body.quantity)*(req.body.price_of_this_item),
+        }
         
 
         
-        const addedCart=await Cart.create(req.body);
+        const addedCart=await Cart.create(data);
         successMessage(
             res,
-            "Product added",
-            data = {
-                addedProduct,
-                parentProduct   
-            },
+            "Cart Created",
+            data = addedCart,
         );
     }
     catch(error){
         errorMessage(
             res,
-            "error",
+            "Cart Does Not Exist",
             error,
 
         );
@@ -61,6 +96,6 @@ const addToCart=async (req,res,)=>{
 
 module.exports={
     getCart,
-
-
+    createCart,
+    getAllCarts,
 }
