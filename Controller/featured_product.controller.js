@@ -68,34 +68,24 @@ const addFeaturedProduct=async (req,res,)=>{
 const getFeaturedProductById=async (req,res,)=>{
     
     try{
-        const id = req.params.pid ;
+        const prid = req.params.pid ;
         //id validity check
         
 
-        const gotproductById=await Product.find({'_id':id},{'featured_product_id':[req.params.fpid]})
+        const gotproductById=await Product.find({"_id":prid,"featured_product_id":req.params.fpid},)
+        console.log(gotproductById)
         if (!gotproductById.length) {
-            
-            return errorMessage(
-                res,
-                "Product not found!!",
-                gotproductById,
-    
-            );
-            
+            return res.status(404).json({ message: "Resource not found.." });
         } 
         const fid =req.params.fpid;
         const gotFeaturedProductById= await Featured_product.findById(fid);
+        const getParentProduct=await Product.find({'_id':prid}).select('-featured_product_id')
         if(!gotFeaturedProductById){
-            errorMessage(
-                res,
-                "Product not found!!",
-                getFeaturedProductById,
-    
-            );
+            return res.status(404).json({ message: "Resource not found" });
         }
         
-        
-        dataa={gotFeaturedProductById,gotproductById};
+        const parentproduct=getParentProduct
+        dataa={gotFeaturedProductById,parentproduct};
         successMessage(
             res,
             "Product found",
@@ -152,24 +142,32 @@ const updateFeaturedProductById=async (req,res,)=>{
     }
 };
 
-const deleteProductById=async (req,res,)=>{
+const deleteFeaturedProductById=async (req,res,)=>{
     
     try{
         const product_id=req.params.pid;
         const fid=req.params.fpid;
-        const delProductById=await featured_product_id.find({'_id':fid});
-        if (!delProductById) {
-            return res.status(404).json({ message: "Resource not found" });
-        }
+        const gotproductById=await Product.find({"_id":product_id,"featured_product_id":fid},)
+        
+        if (!gotproductById.length) {
+            return res.status(404).json({ message: "Resource not found.." });
+        } 
         const parentProduct = await Product.findByIdAndUpdate(product_id , {
             $pull : {'featured_product_id' :fid}
-            
-        });
+        },{new:true});
+        const deletedFeaturedProduct=await Featured_product.findByIdAndDelete(fid);
+        
+
+        if(!deleteFeaturedProductById || !parentProduct){
+            return res.status(404).json({ message: "Resource not found.." });
+        }
+
+
         
         successMessage(
             res,
             "Product found",
-            parentProduct,
+            {parentProduct,deletedFeaturedProduct},
         );
     }
     catch(error){
@@ -187,7 +185,7 @@ module.exports={
     addFeaturedProduct,
     getFeaturedProductById,
     updateFeaturedProductById,
-    deleteProductById,
+    deleteFeaturedProductById,
 
 
 }

@@ -33,6 +33,6 @@ const featured_product = new mongoose.Schema({
     
 })
 
-const Featured_product = mongoose.model("Featured_Product" ,featured_product);
+const Featured_product = mongoose.model("Featured_product" ,featured_product);
 
 module.exports = Featured_product;

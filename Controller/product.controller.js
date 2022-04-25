@@ -14,12 +14,8 @@ const getProduct=async (req,res,)=>{
         
         const gotproduct = await Product.find();
 
-        if(gotproduct.length==0){
-            errorMessage(
-                res,
-                "THERE ARE NO PRODUCTS IN THE DATABASE",
-                data = gotproduct,
-            )
+        if(!gotproduct.length){
+            return res.status(404).json({ message: "No Product Exist With This Id" });
         }
 
         successMessage(
@@ -76,11 +72,7 @@ const getProductById=async (req,res,)=>{
         const id = req.params.pid ;
         const gotproductById=await Product.findById({'_id':id});
         if (!gotproductById) {
-            errorMessage(
-                res,
-                `DINNT FIND ANY PRODUCT WITH PRODUCT ID ${id}`,
-                data = gotproductById ,
-            )
+            return res.status(404).json({ message: "Resource not found" });
         }
         successMessage(
             res,
