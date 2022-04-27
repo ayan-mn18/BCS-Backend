@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/:pid/:fpid' , isAuthenticated , createCart );
 router.get('/getallcart' , isAuthenticated  ,is_Admin, getAllCarts );
 router.get('/:cid' , isAuthenticated  , getCart );
-router.post('/:pid/:fpid/:cid/add' , isAuthenticated  , addProductToCart );
+router.post('/add/:pid/:fpid/:cid' , isAuthenticated  , addProductToCart );
 router.post('/:pid/:fpid/:cid/remove' , isAuthenticated  , deleteProductFromCart );
 
 

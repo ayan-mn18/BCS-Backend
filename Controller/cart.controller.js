@@ -2,6 +2,7 @@ const { Product, Cart, Featured_product } = require("../models");
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
 const {path} = require("path");
 const { cloudinary } = require("../Utils/cloudinary");
+const updateCartPrice = require("../Config/checkUpdates");
 
 
 const getAllCarts=async (req,res,)=>{
@@ -98,34 +99,47 @@ const createCart=async (req,res,)=>{
     }
 }
 const addProductToCart=async (req,res,)=>{
-    
     try{
         const prid = req.params.pid
         const product=await Product.findById(prid);
-        data={
-            "featured_product_id" : req.params.fpid,
-            "product_id":prid,
-            "quantity":req.body.quantity,
-            "price_of_this_item":product.price,
+        if (!product){
+            return res.status(404).json({ message: "Product Does not Exist!!! Please check product Id" });
+        }
+        if (!req.body.quantity ){
+            return res.status(404).json({ message: "Please Mention The Quantity" });
+        }
+        const crid=req.params.cid;
+        const addedcart = await Cart.findOne({
+            _id:crid,
+        });
+        if (!addedcart){
+            return res.status(404).json({ message: "Nothing In Cart please check id" });
+        }
+        ans=false
+        addedcart.cart_items.forEach(item => {
+            if (!ans){
+                if (item.product_id==prid && item.featured_product_id==req.params.fpid){
+                    item.quantity=req.body.quantity
+                    ans=true
+                }
+            }
+        });
+
+        if (!ans){
+            data={
+                "featured_product_id" : req.params.fpid,
+                "product_id":prid,
+                "quantity":req.body.quantity,
+                "price_of_this_item":product.price,
+                
+            };
+            addedcart.cart_items.push(data);
+            addedcart.save();
             
         };
-        const crid=req.params.cid;
-
-        
-        const addedcart = await Cart.findOne({
-        
-
-            _id:crid,
-            product_id:req.params.pid,
-            featured_product_id:req.params.fpid
-         
-        });
-        console.log(addedcart);
-        addedcart.cart_items.push(data);
-
-        
-        
-
+        addedcart.save();
+        const update=await updateCartPrice(req.params.cid)
+        console.log(update)
 
         successMessage(
             res,
@@ -148,6 +162,9 @@ const deleteProductFromCart=async (req,res,)=>{
     try{
         const prid = req.params.pid
         const product=await Product.findById(prid);
+        if (!product){
+            return res.status(404).json({ message: "Product Does not Exist!!! Please check product Id" });
+        }
         data={
             "featured_product_id" : req.params.fpid,
             "product_id":prid,
