@@ -1,4 +1,4 @@
-const { Product, Cart } = require("../models");
+const { Product, Cart, Featured_product } = require("../models");
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
 const {path} = require("path");
 const { cloudinary } = require("../Utils/cloudinary");
@@ -62,23 +62,28 @@ const getCart=async (req,res,)=>{
 const createCart=async (req,res,)=>{
     try{
         const prid = req.params.pid
-        console.log(req.body)
+        const product=await Product.findById(prid);
+        
+        
+        console.log(product)
         data={
             
-            cart_items:[{featured_product_id : req.params.fpid,
-            product_id:prid,
-            quantity:req.body.quantity,
-            price_of_this_item:req.body.price_of_this_item,}],
-            user_id:req.user._id,
-            total_cart_price: (req.body.quantity)*(req.body.price_of_this_item),
-        }
+            "cart_items":[{
+            "featured_product_id" : req.params.fpid,
+            "product_id":prid,
+            "quantity":req.body.quantity,
+            "price_of_this_item":product.price,
+            }],
+            "user_id":req.user.id,
+            "total_cart_price": (req.body.quantity)*(product.price),
+        };
         
 
         
         const addedCart=await Cart.create(data);
         successMessage(
             res,
-            "Cart Created",
+            "Cart Created successfully",
             data = addedCart,
         );
     }
@@ -92,10 +97,108 @@ const createCart=async (req,res,)=>{
 
     }
 }
+const addProductToCart=async (req,res,)=>{
+    
+    try{
+        const prid = req.params.pid
+        const product=await Product.findById(prid);
+        data={
+            "featured_product_id" : req.params.fpid,
+            "product_id":prid,
+            "quantity":req.body.quantity,
+            "price_of_this_item":product.price,
+            
+        };
+        const crid=req.params.cid;
+
+        
+        const addedcart = await Cart.findOne({
+        
+
+            _id:crid,
+            product_id:req.params.pid,
+            featured_product_id:req.params.fpid
+         
+        });
+        console.log(addedcart);
+        addedcart.cart_items.push(data);
+
+        
+        
+
+
+        successMessage(
+            res,
+            "Product found",
+            addedcart,
+        );
+    }
+    catch(error){
+        errorMessage(
+            res,
+            "Product not found!!",
+            error,
+
+        );
+
+    }
+};
+const deleteProductFromCart=async (req,res,)=>{
+    
+    try{
+        const prid = req.params.pid
+        const product=await Product.findById(prid);
+        data={
+            "featured_product_id" : req.params.fpid,
+            "product_id":prid,
+            "quantity":req.body.quantity,
+            "price_of_this_item":product.price,
+            
+        };
+        const crid=req.params.cid;
+
+        
+        const addedcart = await Cart.findOne({
+            $and: [
+            {_id:crid},
+            {product_id:req.params.pid},
+            {featured_product_id:req.params.fpid}
+            ]
+        });
+        console.log(addedcart)
+        
+        addedcart.cart_items.pull(data)
+        addedcart.save()
+        
+        
+
+
+        successMessage(
+            res,
+            "Product found",
+            addedcart,
+        );
+    }
+    catch(error){
+        errorMessage(
+            res,
+            "Product not found!!",
+            error,
+
+        );
+
+    }
+};
+
+
+
+
 
 
 module.exports={
     getCart,
     createCart,
     getAllCarts,
+    addProductToCart,
+    deleteProductFromCart
 }

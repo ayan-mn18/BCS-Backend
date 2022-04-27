@@ -9,7 +9,8 @@ const carts = new mongoose.Schema({
         quantity : {
             type:Number,
             required:true,
-            deafault:1
+            deafault:1,
+            min:1,
 
         },
         price_of_this_item : {
