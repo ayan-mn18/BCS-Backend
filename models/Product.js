@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Featured_product = require('./Featured_product');
+
 
 const product = new mongoose.Schema({
     name: {
@@ -18,7 +20,7 @@ const product = new mongoose.Schema({
     }, 
     featured_product_id: [{
         type: mongoose.SchemaTypes.ObjectId,
-        ref: 'Featured_Product',
+        ref: 'Featured_product',
     }], 
     url: [{
         type: String,

@@ -1,15 +1,15 @@
 const { Product, Featured_product } = require("../models");
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
-const {path} = require("path");
+const { path } = require("path");
 const { cloudinary } = require("../Utils/cloudinary");
 const { upload } = require("../Utils/multer");
 
 
 
-const addFeaturedProduct=async (req,res,)=>{
-    
-    
-    try{
+const addFeaturedProduct = async (req, res,) => {
+
+
+    try {
         //Photo Upload
         //Featured Product Add (FP Model)
         //Connect its fpid to its pid .
@@ -25,21 +25,29 @@ const addFeaturedProduct=async (req,res,)=>{
         //     )
         // }
         const product_id = req.params.pid
-        
+        const check = await Product.findById(product_id);
+        if (!check) {
+            return res.status(404).json({ message: "Product Does Not Exist Please check Product id" });
+        }
 
-        
-        const addedProduct=await Featured_product.create(req.body);
-        console.log(addedProduct.id)
-        const parentProduct = await Product.findByIdAndUpdate(product_id , {
-            $push : {'featured_product_id' : addedProduct.id}
-        });
-    
-        if(parentProduct==null){
-            errorMessage(
+        const newProduct = new Featured_product(req.body);
+
+        try {
+            const addedProduct = await newProduct.save();
+
+        } catch (err) {
+            res.status(500).json(err);
+        }
+        const parentProduct = await Product.findByIdAndUpdate(product_id,
+            { $push: { 'featured_product_id': newProduct.id } },
+            { new: true },
+        );
+        if (parentProduct == null) {
+            return errorMessage(
                 res,
-                "error",
+                "please check product Id",
                 error,
-    
+
             );
 
         }
@@ -48,15 +56,15 @@ const addFeaturedProduct=async (req,res,)=>{
             res,
             "Product added",
             data = {
-                addedProduct,
-                parentProduct   
+                newProduct,
+                parentProduct
             },
         );
     }
-    catch(error){
+    catch (error) {
         errorMessage(
             res,
-            "error",
+            "Please check credentials",
             error,
 
         );
@@ -65,34 +73,34 @@ const addFeaturedProduct=async (req,res,)=>{
 }
 
 
-const getFeaturedProductById=async (req,res,)=>{
-    
-    try{
-        const prid = req.params.pid ;
-        //id validity check
-        
+const getFeaturedProductById = async (req, res,) => {
 
-        const gotproductById=await Product.find({"_id":prid,"featured_product_id":req.params.fpid},)
+    try {
+        const prid = req.params.pid;
+        //id validity check
+
+
+        const gotproductById = await Product.find({ "_id": prid, "featured_product_id": req.params.fpid },);
         console.log(gotproductById)
         if (!gotproductById.length) {
-            return res.status(404).json({ message: "Resource not found.." });
-        } 
-        const fid =req.params.fpid;
-        const gotFeaturedProductById= await Featured_product.findById(fid);
-        const getParentProduct=await Product.find({'_id':prid}).select('-featured_product_id')
-        if(!gotFeaturedProductById){
+            return res.status(404).json({ message: "No Featured Product Exist For Given Product id Please Check Product Id and Feature Product Id" });
+        }
+        const fid = req.params.fpid;
+        const gotFeaturedProductById = await Featured_product.findById(fid).populate("reviews");
+        const getParentProduct = await Product.find({ '_id': prid }).select('-featured_product_id')
+        if (!gotFeaturedProductById) {
             return res.status(404).json({ message: "Resource not found" });
         }
-        
-        const parentproduct=getParentProduct
-        dataa={gotFeaturedProductById,parentproduct};
+
+        const parentproduct = getParentProduct
+        dataa = { gotFeaturedProductById, parentproduct };
         successMessage(
             res,
             "Product found",
-            data=dataa,
+            data = dataa,
         );
     }
-    catch(error){
+    catch (error) {
         errorMessage(
             res,
             "Product not found!!",
@@ -103,38 +111,35 @@ const getFeaturedProductById=async (req,res,)=>{
     }
 };
 
-const updateFeaturedProductById=async (req,res,)=>{
+const updateFeaturedProductById = async (req, res,) => {
     // image upload multiple
-    
-    try{
-        const id=req.params.fpid;
+
+    try {
+        const id = req.params.fpid;
         // if(req.file.path){
 
         // }
         //CHECK PHOTO UPDATE CODE .
-        const updates=req.body;
-        const options={new:true}
-        const updatedProduct=await Featured_product.findByIdAndUpdate(id,updates,options);
-        if (!updatedProduct){
-            errorMessage(
+        const updates = req.body;
+        const options = { new: true }
+        const updatedProduct = await Featured_product.findByIdAndUpdate(id, updates, options);
+        if (!updatedProduct) {
+            return errorMessage(
                 res,
-                "Product not found!!",
-                data=updatedProduct
-    
+                "Please Check Featured Product Id !!!",
+                data = updatedProduct
             );
-
         }
-        
         successMessage(
             res,
             "Product found",
             updatedProduct,
         );
     }
-    catch(error){
+    catch (error) {
         errorMessage(
             res,
-            "Product not found!!",
+            "Featured Product not found!! Please Check Featured Product Id and try again with proper Credentials",
             error,
 
         );
@@ -142,35 +147,35 @@ const updateFeaturedProductById=async (req,res,)=>{
     }
 };
 
-const deleteFeaturedProductById=async (req,res,)=>{
-    
-    try{
-        const product_id=req.params.pid;
-        const fid=req.params.fpid;
-        const gotproductById=await Product.find({"_id":product_id,"featured_product_id":fid},)
-        
+const deleteFeaturedProductById = async (req, res,) => {
+
+    try {
+        const product_id = req.params.pid;
+        const fid = req.params.fpid;
+        const gotproductById = await Product.find({ "_id": product_id, "featured_product_id": fid },)
+
         if (!gotproductById.length) {
             return res.status(404).json({ message: "Resource not found.." });
-        } 
-        const parentProduct = await Product.findByIdAndUpdate(product_id , {
-            $pull : {'featured_product_id' :fid}
-        },{new:true});
-        const deletedFeaturedProduct=await Featured_product.findByIdAndDelete(fid);
-        
+        }
+        const parentProduct = await Product.findByIdAndUpdate(product_id, {
+            $pull: { 'featured_product_id': fid }
+        }, { new: true });
+        const deletedFeaturedProduct = await Featured_product.findByIdAndDelete(fid);
 
-        if(!deleteFeaturedProductById || !parentProduct){
+
+        if (!deleteFeaturedProductById || !parentProduct) {
             return res.status(404).json({ message: "Resource not found.." });
         }
 
 
-        
+
         successMessage(
             res,
             "Product found",
-            {parentProduct,deletedFeaturedProduct},
+            { parentProduct, deletedFeaturedProduct },
         );
     }
-    catch(error){
+    catch (error) {
         errorMessage(
             res,
             "Product not found!!",
@@ -181,7 +186,7 @@ const deleteFeaturedProductById=async (req,res,)=>{
     }
 };
 
-module.exports={
+module.exports = {
     addFeaturedProduct,
     getFeaturedProductById,
     updateFeaturedProductById,

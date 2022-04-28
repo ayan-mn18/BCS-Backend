@@ -1,20 +1,21 @@
-const { Product } = require("../models");
+const { Product, Featured_product } = require("../models");
+
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
-const {path} = require("path");
+const { path } = require("path");
 const { cloudinary } = require("../Utils/cloudinary");
 
 
-const {uploader} =require('../Utils/multer');
+const { uploader } = require('../Utils/multer');
 const is_Admin = require("../Config/isAdmin.config");
 
 
-const getProduct=async (req,res,)=>{
-    
-    try{
-        
-        const gotproduct = await Product.find();
+const getProduct = async (req, res,) => {
 
-        if(!gotproduct.length){
+    try {
+
+        const gotproduct = await Product.find().populate('featured_product_id');
+
+        if (!gotproduct.length) {
             return res.status(404).json({ message: "No Product Exist With This Id" });
         }
 
@@ -24,24 +25,24 @@ const getProduct=async (req,res,)=>{
             gotproduct,
         );
     }
-    catch(error){
+    catch (error) {
         errorMessage(
             res,
-            "Product not found!!", 
+            "Product not found!!",
             error,
         );
 
     }
 };
 
-const addProduct=async (req,res,)=>{
-    
-    try{
-        
+const addProduct = async (req, res,) => {
+
+    try {
+
         const result = await cloudinary.uploader.upload(req.file.path);
 
         console.log(result);
-        if(!result?.secure_url){
+        if (!result?.secure_url) {
             errorMessage(
                 res,
                 "Photo Didnt Upload , Try Again ! ",
@@ -49,7 +50,7 @@ const addProduct=async (req,res,)=>{
             )
         }
         let data = req.body;
-        data.main_url = result?.secure_url ;
+        data.main_url = result?.secure_url;
         const addedProduct = await Product.create(data);
         successMessage(
             res,
@@ -57,7 +58,7 @@ const addProduct=async (req,res,)=>{
             data = addedProduct,
         );
     }
-    catch(error){
+    catch (error) {
         errorMessage(
             res,
             "error",
@@ -66,21 +67,22 @@ const addProduct=async (req,res,)=>{
     }
 };
 
-const getProductById=async (req,res,)=>{
-    
-    try{
-        const id = req.params.pid ;
-        const gotproductById=await Product.findById({'_id':id});
+
+const getProductById = async (req, res,) => {
+
+    try {
+        const id = req.params.pid;
+        const gotproductById = await Product.findById({ '_id': id }).populate("featured_product_id");
         if (!gotproductById) {
-            return res.status(404).json({ message: "Resource not found" });
+            return res.status(404).json({ message: "Product Id is Incorrect" });
         }
         successMessage(
             res,
-            "Product found",
+            'Products found',
             data = gotproductById,
         );
     }
-    catch(error){
+    catch (error) {
         errorMessage(
             res,
             "Product not found!!",
@@ -91,36 +93,34 @@ const getProductById=async (req,res,)=>{
     }
 };
 
-const deleteProductById=async (req,res,)=>{
-    
-    try{
-        const id=req.params.pid;
-        const delProductById=await Product.findByIdAndDelete({'_id':id});
+const deleteProductById = async (req, res,) => {
+
+    try {
+        const id = req.params.pid;
+        const delProductById = await Product.findByIdAndDelete({ '_id': id });
         if (!delProductById) {
-            return res.status(404).json({ message: "Resource not found" });
-          }
-        
+            return res.status(404).json({ message: "Resource not found Product Id is Not correct" });
+        }
         successMessage(
             res,
-            "Product found",
+            "Product Deleted Successfully",
             delProductById,
         );
     }
-    catch(error){
+    catch (error) {
         errorMessage(
             res,
             "Product not found!!",
             error,
-
         );
 
     }
 };
 
-const updateProductById=async (req,res,)=>{
-    
-    try{
-        const id=req.params.pid;
+const updateProductById = async (req, res,) => {
+
+    try {
+        const id = req.params.pid;
         console.log(id)
         //Only 4 fields can be updated in product model.
         //-> name
@@ -131,25 +131,24 @@ const updateProductById=async (req,res,)=>{
 
         // }
         //CHECK PHOTO UPDATE CODE .
-        const updates =req.body;
-        const options={new:true}
-        const updatedProduct=await Product.findOneAndUpdate({_id : id} , updates , options);
-        if(!updatedProduct){
-            errorMessage(
+        const updates = req.body;
+        const updatedProduct = await Product.findByIdAndUpdate({ _id: id },updates,{ new: true });
+        if (!updatedProduct) {
+            return errorMessage(
                 res,
                 "Product can't be updated check if the product exists or give proper credentials to udate the product"
             );
         }
         successMessage(
             res,
-            "Product found",
+            "Product Updated Successfully",
             updatedProduct,
         );
     }
-    catch(error){
+    catch (error) {
         errorMessage(
             res,
-            "Product not found!!",
+            "Product not found!! Please Check Prodcut Id",
             error,
 
         );
@@ -160,7 +159,7 @@ const updateProductById=async (req,res,)=>{
 
 
 
-module.exports={
+module.exports = {
     getProduct,
     addProduct,
     getProductById,

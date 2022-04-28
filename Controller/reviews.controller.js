@@ -74,7 +74,10 @@ const updateReview=async (req,res,)=>{
         const { pid , rid }=req.params;
         const updates=req.body;
         const options={new:true}
-        const updatedReview=await Reviews.findByIdAndUpdate({ "product_id":pid , _id : rid },updates,options);
+        const updatedReview=await Reviews.findByIdAndUpdate({ "product_id":pid , _id : rid },
+        {$set : updates},
+        options
+        );
         if(mongoose.Types.ObjectId.isValid(pid)){
             if(updatedReview==null){
                 return res.status(404).json({ message: "Resource not found" });
@@ -133,11 +136,11 @@ const getReviewsByUserId= async (req,res)=>{
         console.log(id)
         const gotreviewById=await Reviews.find({user_id:id});
         if (!gotreviewById.length) {
-            return res.status(404).json({ message: "Resource not found" });
+            return res.status(404).json({ message: "Either This user has Not Added any reviews Or User Does  Not Exist" });
         }
         successMessage(
             res,
-            "Product Reviews found",
+            "User Reviews found",
             gotreviewById,
         );
     }

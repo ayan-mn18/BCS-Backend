@@ -13,7 +13,4 @@ router.put("/:pid/:rid",isAuthenticated,updateReview);
 router.delete('/:pid/:rid',isAuthenticated,deleteReview);
 router.get('/user_reviews',isAuthenticated,getReviewsByUserId);
 
-
-
-
 module.exports = router;
