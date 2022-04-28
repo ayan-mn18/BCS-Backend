@@ -20,7 +20,7 @@ const getProduct=async (req,res,)=>{
 
         successMessage(
             res,
-            "Product found",
+            `Total of ${gotproduct.length} Products found`,
             gotproduct,
         );
     }
@@ -121,13 +121,25 @@ const updateProductById=async (req,res,)=>{
     
     try{
         const id=req.params.pid;
+        console.log(id)
+        //Only 4 fields can be updated in product model.
+        //-> name
+        //-> weight
+        //-> details
+        //-> photos : url[] , main_url
         // if(req.file.path){
 
         // }
         //CHECK PHOTO UPDATE CODE .
-        const updates=req.body;
+        const updates =req.body;
         const options={new:true}
-        const updatedProduct=await Product.findByIdAndUpdate(id,updates,options);
+        const updatedProduct=await Product.findOneAndUpdate({_id : id} , updates , options);
+        if(!updatedProduct){
+            errorMessage(
+                res,
+                "Product can't be updated check if the product exists or give proper credentials to udate the product"
+            );
+        }
         successMessage(
             res,
             "Product found",

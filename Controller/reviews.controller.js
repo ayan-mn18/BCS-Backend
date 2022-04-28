@@ -3,48 +3,21 @@ const { Reviews, User, Product } = require("../models");
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
 
 const mongoose=require('mongoose');
-const getAllReviews=async (req,res,)=>{
-    
-    try{
-
-        
-        const gotAllReviews=await Reviews.find();
-        if(gotAllReviews.length==0){
-            return res.status(404).json({ message: "There Is no product Please add some product"});
-        }
-        
-        successMessage(
-            res,
-            "Reviews found",
-            gotAllReviews,
-        );
-    }
-    catch(error){
-        errorMessage(
-            res,
-            "No Review found!!",
-            error,
-
-        );
-
-    }
-}
 
 const getReviews= async (req,res)=>{
 
     try{
-        console.log(req.body)
         const id=req.params.pid;
         
         if(mongoose.Types.ObjectId.isValid(id)){
-            const gotreviewById=await Reviews.find({'product_id':id});
+            const gotreviewById=await Reviews.find({'product_id':id}).populate('user_id').populate('product_id');
             if (!gotreviewById.length) {
                 return res.status(404).json({ message: "Resource not found" });
             }
             else{
                 successMessage(
                     res,
-                    "Product found",
+                    "Reviews Found of product",
                     gotreviewById,
                 );
             }
@@ -98,18 +71,18 @@ const addReviews=async (req,res,)=>{
 const updateReview=async (req,res,)=>{
     
     try{
-        const id=req.params.pid;
+        const { pid , rid }=req.params;
         const updates=req.body;
         const options={new:true}
-        const updatedReview=await Reviews.findOneAndUpdate({product_id:id},updates,options);
-        if(mongoose.Types.ObjectId.isValid(id)){
+        const updatedReview=await Reviews.findByIdAndUpdate({ "product_id":pid , _id : rid },updates,options);
+        if(mongoose.Types.ObjectId.isValid(pid)){
             if(updatedReview==null){
                 return res.status(404).json({ message: "Resource not found" });
             }
             else{
                 successMessage(
                     res,
-                    "Product updated Successfully",
+                    "Product Review updated Successfully",
                     updatedReview,
                 );
             }
@@ -129,24 +102,25 @@ const deleteReview= async (req,res,)=>{
 
     
     try{
-        
-        
-        
-        const deletedReview=await Reviews.findOneAndDelete({'user_id':req.user._id,product_id:req.params.pid})
+        const { pid , rid } = req.params ;
+        const deletedReview=await Reviews.findByIdAndDelete({'product_id' : pid , _id : rid });
         if (!deletedReview) {
-            return res.status(404).json({ message: "Resource not found" });
+            errorMessage(
+                res,
+                "No such product review exists"
+            );
+        }else{
+            successMessage(
+                res,
+                "Product Review Deleted Successfully",
+                deletedReview,
+            );
         }
-
-        successMessage(
-            res,
-            "Product Deleted Successfully",
-            deletedReview,
-        );
     }
     catch(error){
         errorMessage(
             res,
-            "Product not found!!",
+            "Product Review not found!!",
             error,
 
         );
@@ -156,17 +130,14 @@ const deleteReview= async (req,res,)=>{
 const getReviewsByUserId= async (req,res)=>{
     try{
         const id=req.user._id;
+        console.log(id)
         const gotreviewById=await Reviews.find({user_id:id});
-        
-        
-        
         if (!gotreviewById.length) {
             return res.status(404).json({ message: "Resource not found" });
-          }
-          
+        }
         successMessage(
             res,
-            "Product found",
+            "Product Reviews found",
             gotreviewById,
         );
     }
@@ -181,7 +152,29 @@ const getReviewsByUserId= async (req,res)=>{
     }
 }
 
-
+const getReviewsByReviewId = async (req,res) =>{
+    try {
+        const { rid , pid } = req.params;
+        const review = await Reviews.findOne({'product_id' : pid , _id : rid });
+        if(!review){
+            errorMessage(
+                res,
+                "Could not find product review of the given credentials"
+            )
+        }
+        successMessage(
+            res,
+            "Product review found",
+            data = review,
+        )
+    } catch (error) {
+        errorMessage(
+            res,
+            error,
+            "Product review not found"
+        )
+    }
+}
 
 
 
@@ -189,9 +182,8 @@ const getReviewsByUserId= async (req,res)=>{
 module.exports={
     getReviews,
     addReviews,
-    getAllReviews,
     updateReview,
     deleteReview,
-    getReviewsByUserId
-    
+    getReviewsByUserId,
+    getReviewsByReviewId
 }

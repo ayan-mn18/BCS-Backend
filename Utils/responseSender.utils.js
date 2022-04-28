@@ -10,7 +10,7 @@ const errorMessage = (res , message ,error, data  , status="ERROR" , statusCode 
     console.log(error)
     return res.status(statusCode).json({
         status : status ,
-        difficulty : error.message ,
+        difficulty : error?.message ,
         message : message,
         data : data 
     })
