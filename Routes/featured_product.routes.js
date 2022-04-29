@@ -6,10 +6,10 @@ const { upload } = require('../Utils/multer');
 
 const router = express.Router();
 
-router.post('/:pid' , isAuthenticated , isAdmin , addFeaturedProduct );
+router.post('/:pid' , isAuthenticated , isAdmin , upload.array('url') , addFeaturedProduct );
 router.get('/:pid/:fpid' , isAuthenticated , isAdmin , getFeaturedProductById );
-router.patch('/:pid/:fpid',isAuthenticated,isAdmin,updateFeaturedProductById);
-router.delete('/:pid/:fpid',isAuthenticated,isAdmin,deleteFeaturedProductById);
+router.patch('/:pid/:fpid',isAuthenticated,isAdmin,upload.array('url'),updateFeaturedProductById);
+router.delete('/:pid/:fpid',isAuthenticated,isAdmin,upload.array('url'),deleteFeaturedProductById);
 
 
 module.exports = router;

@@ -1,12 +1,8 @@
 const { Product, Featured_product } = require("../models");
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
-const { path } = require("path");
-const { cloudinary } = require("../Utils/cloudinary");
-const { upload } = require("../Utils/multer");
+const { cloudinary }  = require("../Utils/cloudinary");
 
-
-
-const addFeaturedProduct = async (req, res,) => {
+const addFeaturedProduct = async (req, res) => {
 
 
     try {
@@ -14,7 +10,22 @@ const addFeaturedProduct = async (req, res,) => {
         //Featured Product Add (FP Model)
         //Connect its fpid to its pid .
         //Error Handling 
-        // console.log(req.file)
+        console.log(req.files)
+        const urls = [];
+        const files = req.files;
+        for (const file of files) {
+            const { path } = file;
+            const newPath = await cloudinary.uploader.upload(path);
+            urls.push(newPath.secure_url);
+        }
+        if(urls.length == 0)   {
+            errorMessage(
+                res,
+                "Please give photos for the featured products"
+            )
+        }
+        let data = req.body;
+        data.url = urls;
         // const result = await cloudinary.uploader.upload(req.file.path);
         // console.log(result)
         // if(!result){
@@ -23,6 +34,8 @@ const addFeaturedProduct = async (req, res,) => {
         //         "PHOTOS DINDT UPLOAD",
         //         data = result,
         //     )
+        // }else{
+        //     req.body.url = [result.secure_url];
         // }
         const product_id = req.params.pid
         const check = await Product.findById(product_id);
@@ -41,7 +54,7 @@ const addFeaturedProduct = async (req, res,) => {
         const parentProduct = await Product.findByIdAndUpdate(product_id,
             { $push: { 'featured_product_id': newProduct.id } },
             { new: true },
-        );
+        ).populate('featured_product_id');
         if (parentProduct == null) {
             return errorMessage(
                 res,
@@ -66,14 +79,13 @@ const addFeaturedProduct = async (req, res,) => {
             res,
             "Please check credentials",
             error,
-
         );
 
     }
 }
 
 
-const getFeaturedProductById = async (req, res,) => {
+const getFeaturedProductById = async (req, res) => {
 
     try {
         const prid = req.params.pid;
@@ -111,7 +123,7 @@ const getFeaturedProductById = async (req, res,) => {
     }
 };
 
-const updateFeaturedProductById = async (req, res,) => {
+const updateFeaturedProductById = async (req, res) => {
     // image upload multiple
 
     try {
@@ -120,6 +132,21 @@ const updateFeaturedProductById = async (req, res,) => {
 
         // }
         //CHECK PHOTO UPDATE CODE .
+        if(req.files.length > 0){
+
+            const urls = [];
+            const files = req.files;
+            for (const file of files) {
+                const { path } = file;
+                const newPath = await cloudinary.uploader.upload(path);
+                urls.push(newPath.secure_url);
+            }
+            if(urls.length == 0)   {
+                return res.status(404).json({ message: "give proper photos for featured product !" });
+                }
+                let data = req.body;
+                data.url = urls
+        }   
         const updates = req.body;
         const options = { new: true }
         const updatedProduct = await Featured_product.findByIdAndUpdate(id, updates, options);
@@ -147,7 +174,7 @@ const updateFeaturedProductById = async (req, res,) => {
     }
 };
 
-const deleteFeaturedProductById = async (req, res,) => {
+const deleteFeaturedProductById = async (req, res) => {
 
     try {
         const product_id = req.params.pid;
