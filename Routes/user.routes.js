@@ -1,9 +1,12 @@
 const express = require('express');
-const { checkAuth, isAuthenticated } = require('../Config');
-const { registerUser, loginUser, alluser } = require('../Controller/auth.controller');
-const { deleteUser } = require('../Controller/user.controller');
+const {isAuthenticated} = require('../Config');
+const is_Admin = require('../Config/isAdmin.config');
+
+const { deleteUser, allUser, updateUser } = require('../Controller/user.controller');
 const router = express.Router();
 
-router.delete('/deleteuser/:uid',isAuthenticated,deleteUser)
+router.get('/alluser',isAuthenticated,is_Admin,allUser);
+router.patch('/updateuser/:uid',isAuthenticated,is_Admin,updateUser);
+router.delete('/deleteuser/:uid',isAuthenticated,is_Admin, deleteUser);
 
 module.exports = router;

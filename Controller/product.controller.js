@@ -1,12 +1,8 @@
 const { Product, Featured_product } = require("../models");
 
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
-const { path } = require("path");
 const { cloudinary } = require("../Utils/cloudinary");
 
-
-const { uploader } = require('../Utils/multer');
-const is_Admin = require("../Config/isAdmin.config");
 
 
 const getProduct = async (req, res,) => {
@@ -38,23 +34,28 @@ const getProduct = async (req, res,) => {
 const addProduct = async (req, res,) => {
 
     try {
-
-        const result = await cloudinary.uploader.upload(req.file.path);
-
-        console.log(result);
-        if (!result?.secure_url) {
-            errorMessage(
+        const urls = [];
+        const files = req.files;
+        for (const file of files) {
+            const { path } = file;
+            const newPath = await cloudinary.uploader.upload(path);
+            urls.push(newPath.secure_url);
+        }
+        if (urls.length == 0) {
+            return errorMessage(
                 res,
-                "Photo Didnt Upload , Try Again ! ",
-                result,
+                "Please give At least One photo for the Product"
             )
         }
         let data = req.body;
-        data.main_url = result?.secure_url;
+        data.url = urls;
+
+
+
         const addedProduct = await Product.create(data);
         successMessage(
             res,
-            "Product added",
+            "Product added successfuly",
             data = addedProduct,
         );
     }
@@ -78,7 +79,7 @@ const getProductById = async (req, res,) => {
         }
         successMessage(
             res,
-            'Products found',
+            'Product found',
             data = gotproductById,
         );
     }
@@ -101,6 +102,7 @@ const deleteProductById = async (req, res,) => {
         if (!delProductById) {
             return res.status(404).json({ message: "Resource not found Product Id is Not correct" });
         }
+        // If product gets Deleted we should also delete Featured Product????
         successMessage(
             res,
             "Product Deleted Successfully",
@@ -131,8 +133,26 @@ const updateProductById = async (req, res,) => {
 
         // }
         //CHECK PHOTO UPDATE CODE .
-        const updates = req.body;
-        const updatedProduct = await Product.findByIdAndUpdate({ _id: id },updates,{ new: true });
+        const updates = req.body
+        const urls = [];
+        if (req.files) {
+
+            const files = req.files;
+            for (const file of files) {
+                const { path } = file;
+                const newPath = await cloudinary.uploader.upload(path);
+                urls.push(newPath.secure_url);
+            }
+
+
+        }
+        const updatedProduct = await Product.findByIdAndUpdate({ _id: id },
+            {
+                $set: { updates },
+                $push: { url: urls }
+            },
+            { new: true }
+        );
         if (!updatedProduct) {
             return errorMessage(
                 res,

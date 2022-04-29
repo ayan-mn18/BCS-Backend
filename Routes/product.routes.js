@@ -11,9 +11,9 @@ const router = express.Router();
 
 router.get('/getproduct',isAuthenticated,is_Admin,getProduct);
 router.get('/:pid',isAuthenticated,getProductById);
-router.post('/addproduct',isAuthenticated,is_Admin,upload.single('image'),addProduct);
+router.post('/addproduct',isAuthenticated,is_Admin,upload.array('url'),addProduct);
 router.delete('/:pid',isAuthenticated,is_Admin,deleteProductById);
-router.patch('/:pid',isAuthenticated,is_Admin,upload.single('image'),updateProductById)
+router.patch('/:pid',isAuthenticated,is_Admin,upload.array('url'),updateProductById)
 
 
 
