@@ -1,5 +1,5 @@
 const { Product, Featured_product } = require("../models");
-
+const {path} = require("path");
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
 const { cloudinary } = require("../Utils/cloudinary");
 
@@ -34,24 +34,9 @@ const getProduct = async (req, res,) => {
 const addProduct = async (req, res,) => {
 
     try {
-        const urls = [];
-        const files = req.files;
-        for (const file of files) {
-            const { path } = file;
-            const newPath = await cloudinary.uploader.upload(path);
-            urls.push(newPath.secure_url);
-        }
-        if (urls.length == 0) {
-            return errorMessage(
-                res,
-                "Please give At least One photo for the Product"
-            )
-        }
+        console.log(req.body)
         let data = req.body;
-        data.url = urls;
-
-
-
+        console.log(data)
         const addedProduct = await Product.create(data);
         successMessage(
             res,
@@ -62,7 +47,7 @@ const addProduct = async (req, res,) => {
     catch (error) {
         errorMessage(
             res,
-            "error",
+            "Please check all the parameters are given",
             error,
         );
     }
@@ -148,7 +133,7 @@ const updateProductById = async (req, res,) => {
         }
         const updatedProduct = await Product.findByIdAndUpdate({ _id: id },
             {
-                $set: { updates },
+                $set:  updates,
                 $push: { url: urls }
             },
             { new: true }

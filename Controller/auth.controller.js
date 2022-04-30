@@ -30,6 +30,7 @@ const loginUser = async (req,res) =>{
         user_name,
         name,
         };
+        console.log(req.body)
         const accessToken = jwt.sign(jwtUser, process.env.ACCESS_TOKEN);
         const user = req.user;
         const data = {
