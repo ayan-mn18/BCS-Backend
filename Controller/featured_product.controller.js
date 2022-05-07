@@ -1,6 +1,6 @@
 const { Product, Featured_product } = require("../models");
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
-const { cloudinary }  = require("../Utils/cloudinary");
+const { cloudinary } = require("../Utils/cloudinary");
 
 const addFeaturedProduct = async (req, res) => {
 
@@ -10,16 +10,17 @@ const addFeaturedProduct = async (req, res) => {
         //Featured Product Add (FP Model)
         //Connect its fpid to its pid .
         //Error Handling 
-        console.log(req.files)
+        
         const urls = [];
         const files = req.files;
         for (const file of files) {
+            
             const { path } = file;
             const newPath = await cloudinary.uploader.upload(path);
             urls.push(newPath.secure_url);
         }
-        if(urls.length == 0)   {
-            errorMessage(
+        if (urls.length == 0) {
+            return errorMessage(
                 res,
                 "Please give photos for the featured products"
             )
@@ -132,7 +133,8 @@ const updateFeaturedProductById = async (req, res) => {
 
         // }
         //CHECK PHOTO UPDATE CODE .
-        if(req.files.length > 0){
+        
+        if (req.files) {
 
             const urls = [];
             const files = req.files;
@@ -141,12 +143,12 @@ const updateFeaturedProductById = async (req, res) => {
                 const newPath = await cloudinary.uploader.upload(path);
                 urls.push(newPath.secure_url);
             }
-            if(urls.length == 0)   {
+            if (urls.length == 0) {
                 return res.status(404).json({ message: "give proper photos for featured product !" });
-                }
-                let data = req.body;
-                data.url = urls
-        }   
+            }
+            let data = req.body;
+            data.url = urls
+        }
         const updates = req.body;
         const options = { new: true }
         const updatedProduct = await Featured_product.findByIdAndUpdate(id, updates, options);

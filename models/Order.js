@@ -2,14 +2,12 @@ const mongoose = require('mongoose');
 
 const order = new mongoose.Schema({
     cart_id : {
-        type: String,
-        required: true,
-    
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Cart',
     }, 
     user_id: {
-        type: String,
-        required: true,
-        
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'User',
     }, 
     payment_done: {
         type: Boolean,
