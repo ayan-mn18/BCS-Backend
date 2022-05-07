@@ -4,7 +4,7 @@ const { registerUser, loginUser, alluser } = require('../Controller/auth.control
 const router = express.Router();
 
 router.post('/register' , registerUser);
-router.get('/login' , checkAuth ,loginUser);
+router.post('/login' , checkAuth ,loginUser);
 router.get('/alluser',isAuthenticated,isAdmin,alluser);
 
 

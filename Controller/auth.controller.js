@@ -51,6 +51,7 @@ const loginUser = async (req,res) =>{
         )
     }
 }
+
 const alluser=async (req,res)=>{
     try{
         const user=await User.find();
