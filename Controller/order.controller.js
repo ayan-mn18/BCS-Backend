@@ -29,7 +29,9 @@ const createOrder = async (req, res,) => {
         const addedOrder = await Order.create(data);
         thisUser.previous_orders.push(addedOrder._id);
         thisUser.save()
-
+        // order k andar wali cid -> cid.curr_cart_item = false
+        // cid.ordered = true
+        // logic to create new cart and assgin to req.user._id
         successMessage(
             res,
             "Order added successfuly",

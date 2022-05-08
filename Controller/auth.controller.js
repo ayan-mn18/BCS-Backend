@@ -7,6 +7,10 @@ const registerUser = async (req,res) =>{
     try {
         req.body.password = await bcrypt.hash(req.body.password, 10);
         const registeredUser = await User.create(req.body);
+        //LOGIC FOR CREATNG NEW CART
+
+        //data : {}
+        //create cart : {}
         successMessage(
             res,
             "User registered successfully",
@@ -67,6 +71,9 @@ const alluser=async (req,res)=>{
             res,
             "message",
             error,
+        )
+    }
+}
 
 
 module.exports = {

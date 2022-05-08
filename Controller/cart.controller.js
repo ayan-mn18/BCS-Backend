@@ -98,7 +98,9 @@ const createCart=async (req,res,)=>{
 
     }
 }
+
 const addProductToCart=async (req,res,)=>{
+    //cart_items : []
     try{
         const prid = req.params.pid
         const product=await Product.findById(prid);
@@ -115,7 +117,7 @@ const addProductToCart=async (req,res,)=>{
         if (!addedcart){
             return res.status(404).json({ message: "Nothing In Cart please check id" });
         }
-        ans=false
+        let ans=false
         addedcart.cart_items.forEach(item => {
             if (!ans){
                 if (item.product_id==prid && item.featured_product_id==req.params.fpid){
@@ -134,13 +136,10 @@ const addProductToCart=async (req,res,)=>{
                 
             };
             addedcart.cart_items.push(data);
-            addedcart.save();
             
         };
-        addedcart.save();
-        const update=await updateCartPrice(req.params.cid)
-        console.log(update)
-
+        const update = await updateCartPrice(addedcart)
+        console.log(update);
         successMessage(
             res,
             "Product found",
@@ -157,9 +156,11 @@ const addProductToCart=async (req,res,)=>{
 
     }
 };
+
 const deleteProductFromCart=async (req,res,)=>{
-    
+    //pull cid --> cart_items[]
     try{
+        //ERROR HANDLING
         const prid = req.params.pid
         const product=await Product.findById(prid);
         if (!product){
@@ -168,32 +169,27 @@ const deleteProductFromCart=async (req,res,)=>{
         data={
             "featured_product_id" : req.params.fpid,
             "product_id":prid,
-            "quantity":req.body.quantity,
             "price_of_this_item":product.price,
             
         };
         const crid=req.params.cid;
-
-        
-        const addedcart = await Cart.findOne({
+        const pid=req.params.pid;
+        const fpid=req.params.fpid;
+        const cproduct  = await Cart.findOneAndUpdate({
             $and: [
-            {_id:crid},
-            {product_id:req.params.pid},
-            {featured_product_id:req.params.fpid}
-            ]
-        });
-        console.log(addedcart)
-        
-        addedcart.cart_items.pull(data)
-        addedcart.save()
-        
-        
-
-
+                    {_id:crid},
+                    {product_id:req.params.pid},
+                    {featured_product_id:req.params.fpid}
+                    ]
+        },{
+            $pull : { cart_items : { 'product_id' : pid , 'featured_product_id' : fpid} }
+        },{new : true});
+        // await cproduct.save();
+        const update = await updateCartPrice(cproduct);
         successMessage(
             res,
             "Product found",
-            addedcart,
+            cproduct,
         );
     }
     catch(error){
@@ -201,9 +197,7 @@ const deleteProductFromCart=async (req,res,)=>{
             res,
             "Product not found!!",
             error,
-
         );
-
     }
 };
 

@@ -1,7 +1,4 @@
-const { Cart } = require("../models")
-
-const updateCartPrice = async (cart_id) =>{
-    const cart = await Cart.findOne({_id:cart_id});
+const updateCartPrice = async (cart) =>{
     let price = 0;
     cart.cart_items.forEach(item => {
         price += item.quantity * item.price_of_this_item;
@@ -9,7 +6,7 @@ const updateCartPrice = async (cart_id) =>{
     
 
     cart.total_cart_price= price;
-    cart.save();
+    await cart.save();
     return price;
 }
 

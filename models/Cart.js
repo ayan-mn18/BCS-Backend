@@ -30,7 +30,16 @@ const carts = new mongoose.Schema({
         type:Number,
         required:true,
     },//req
-
+    curr_user_cart : {
+        type : Boolean,
+        default : true,
+    },
+    is_ordered : {
+        type :Boolean ,
+        default : false ,
+    }
+    // --> Whenever USer regiters in the app a cart is automatically made and assigned curr_item and to that user
+    // --> Whenever a user places order that cart will be associated to that order & curr_item will be assigned false and new cart will be made 
 })
 
 const Cart = mongoose.model("Cart" ,carts);
