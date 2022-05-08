@@ -62,26 +62,25 @@ const getCart=async (req,res,)=>{
 
 const createCart=async (req,res,)=>{
     try{
-        const prid = req.params.pid
-        const product=await Product.findById(prid);
-        
-        
-        console.log(product)
-        data={
+        // data={
             
-            "cart_items":[{
-            "featured_product_id" : req.params.fpid,
-            "product_id":prid,
-            "quantity":req.body.quantity,
-            "price_of_this_item":product.price,
-            }],
-            "user_id":req.user.id,
-            "total_cart_price": (req.body.quantity)*(product.price),
-        };
+        //     "cart_items":[{
+        //     "featured_product_id" : req.params.fpid,
+        //     "product_id":prid,
+        //     "quantity":req.body.quantity,
+        //     "price_of_this_item":product.price,
+        //     }],
+        //     "user_id":req.user.id,
+        //     "total_cart_price": (req.body.quantity)*(product.price),
+        // };
         
-
+        let data = req.body;
+        data.user_id = req.user._id;
         
         const addedCart=await Cart.create(data);
+        if(!addedCart){
+            return res.status(404).json({ message: "Please provide proper credentials" });
+        }
         successMessage(
             res,
             "Cart Created successfully",
@@ -91,7 +90,7 @@ const createCart=async (req,res,)=>{
     catch(error){
         errorMessage(
             res,
-            "Cart Does Not Exist",
+            "Error Creating the cart",
             error,
 
         );

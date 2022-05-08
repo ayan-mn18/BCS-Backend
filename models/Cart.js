@@ -25,10 +25,12 @@ const carts = new mongoose.Schema({
     user_id : {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'User',
+        required : true
     },
     total_cart_price : {
         type:Number,
         required:true,
+        default : 0
     },//req
     curr_user_cart : {
         type : Boolean,

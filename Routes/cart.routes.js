@@ -7,7 +7,7 @@ const { upload } = require('../Utils/multer');
 const router = express.Router();
 
 
-router.post('/:pid/:fpid' , isAuthenticated , createCart );
+router.post('/create' , isAuthenticated , createCart );
 router.get('/getallcart' , isAuthenticated  ,is_Admin, getAllCarts );
 router.get('/:cid' , isAuthenticated  , getCart );
 router.patch('/:pid/:fpid/:cid/add' , isAuthenticated  , addProductToCart );
