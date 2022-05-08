@@ -1,5 +1,6 @@
 const { Cart, Order, User } = require("../models");
 const { successMessage, errorMessage } = require("../Utils/responseSender.utils");
+const {instance} = require('../Config')
 
 const createOrder = async (req, res,) => {
 
@@ -13,12 +14,24 @@ const createOrder = async (req, res,) => {
             );
         }
 
+        const orders = await Order.find({})
+        let l = orders.length + 1 , m =0;
+        let notes = [];
+        // pid , fpid , quantity for every item in the cart
+        console.log(orders)
+        // const cart_item = await Cart.findById(req.params.cid);
+        // cart_item.cart_items.forEach(item => {
+        //     let notes_data = {}
+        //     notes_data.
+        //     notes[m++] = notes_data;
+        // });
+
         let data = req.body;
         data.cart_id = req.params.cid;
         data.user_id = req.user.id;
         console.log(data,thisUser);
         const cart = await Cart.findById({"_id": req.params.cid});
-        if (!cart) {
+        if (!cart || cart.cart_items.length == 0) {
             return errorMessage(
                 res,
                 "Please check all the parameters are given and cart id is correct",
@@ -46,6 +59,7 @@ const createOrder = async (req, res,) => {
         );
     }
 };
+
 const getOrderById = async (req, res,) => {
     try {
         const gotOrder = await Order.find({ '_id': req.params.oid }).populate("cart_id").populate("user_id");
@@ -105,6 +119,7 @@ const updateOrderById = async (req, res,) => {
 
     }
 };
+
 const deleteOrderById = async (req, res,) => {
 
     try {
@@ -138,6 +153,7 @@ const deleteOrderById = async (req, res,) => {
 
     }
 };
+
 module.exports = {
     createOrder,
     getOrderById,

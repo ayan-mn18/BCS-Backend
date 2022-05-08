@@ -63,8 +63,10 @@ const userSchema = new mongoose.Schema({
     cart_items :[{
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Cart',
+        // autopopulate : true,
     }],
 })
+userSchema.plugin(require('mongoose-autopopulate'));
 
 const User = mongoose.model("User" ,userSchema);
 

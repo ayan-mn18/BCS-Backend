@@ -14,17 +14,15 @@ const featured_product = new mongoose.Schema({
     ingredients: {
         type: String,
         required: true,
-      
     }, 
     auth_code: {
         type: String,
         required: true,
-      
     }, 
     reviews: [{
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Review',
-      
+        // autopopulate : true
     }], 
     url: [{
         type: String,
@@ -32,6 +30,7 @@ const featured_product = new mongoose.Schema({
     }], 
     
 })
+featured_product.plugin(require('mongoose-autopopulate'));
 
 const Featured_product = mongoose.model("Featured_product" ,featured_product);
 

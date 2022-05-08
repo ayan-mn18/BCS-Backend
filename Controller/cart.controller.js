@@ -110,6 +110,7 @@ const addProductToCart=async (req,res,)=>{
             return res.status(404).json({ message: "Please Mention The Quantity" });
         }
         const crid=req.params.cid;
+        const fpid=req.params.fpid;
         const addedcart = await Cart.findOne({
             _id:crid,
         });
@@ -119,7 +120,7 @@ const addProductToCart=async (req,res,)=>{
         let ans=false
         addedcart.cart_items.forEach(item => {
             if (!ans){
-                if (item.product_id==prid && item.featured_product_id==req.params.fpid){
+                if (item.product_id==prid && item.featured_product_id==fpid){
                     item.quantity=req.body.quantity
                     ans=true
                 }
@@ -128,7 +129,7 @@ const addProductToCart=async (req,res,)=>{
 
         if (!ans){
             data={
-                "featured_product_id" : req.params.fpid,
+                "featured_product_id" : fpid,
                 "product_id":prid,
                 "quantity":req.body.quantity,
                 "price_of_this_item":product.price,

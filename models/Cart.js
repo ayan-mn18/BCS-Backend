@@ -5,6 +5,7 @@ const carts = new mongoose.Schema({
         product_id : {
             type: mongoose.SchemaTypes.ObjectId,
             ref: 'Product',
+            // autopopulate : true
         },
         quantity : {
             type:Number,
@@ -20,12 +21,14 @@ const carts = new mongoose.Schema({
         featured_product_id:{
             type: mongoose.SchemaTypes.ObjectId,
             ref: 'Featured_product',
+            // autopopulate : true
         },
     }],
     user_id : {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'User',
-        required : true
+        required : true,
+        autopopulate : true
     },
     total_cart_price : {
         type:Number,
@@ -43,6 +46,7 @@ const carts = new mongoose.Schema({
     // --> Whenever USer regiters in the app a cart is automatically made and assigned curr_item and to that user
     // --> Whenever a user places order that cart will be associated to that order & curr_item will be assigned false and new cart will be made 
 })
+carts.plugin(require('mongoose-autopopulate'));
 
 const Cart = mongoose.model("Cart" ,carts);
 

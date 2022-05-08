@@ -16,11 +16,11 @@ const product = new mongoose.Schema({
     weight: {
         type: String,
         required: true,
-      
     }, 
     featured_product_id: [{
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Featured_product',
+        // autopopulate : true 
     }], 
     url: [{
         type: String,
@@ -38,6 +38,7 @@ const product = new mongoose.Schema({
     }
     
 })
+product.plugin(require('mongoose-autopopulate'));
 
 const Product = mongoose.model("Product" ,product);
 
