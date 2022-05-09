@@ -60,11 +60,12 @@ const userSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Order',
     }],
-    cart_items :[{
+    curr_cart_items :{
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Cart',
+        default : '6277ac8d120b7cbe71829278'
         // autopopulate : true,
-    }],
+    },
 })
 userSchema.plugin(require('mongoose-autopopulate'));
 

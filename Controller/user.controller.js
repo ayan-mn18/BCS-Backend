@@ -77,8 +77,19 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const getUser = async (req,res) => {
+    try {
+        successMessage(res,
+            "user details found successfully",
+            data = req.user)
+    } catch (error) {
+        errorMessage(res,"ERROR USER DETAILS NT FOUND ", error);
+    }
+}
+
 module.exports = {
     deleteUser,
     allUser,
-    updateUser
+    updateUser,
+    getUser
 }
