@@ -16,20 +16,30 @@ const createOrder = async (req, res,) => {
 
         const orders = await Order.find({})
         let l = orders.length + 1 , m =0;
-        let notes = [];
+        let notes = {} ;
         // pid , fpid , quantity for every item in the cart
-        console.log(orders)
-        // const cart_item = await Cart.findById(req.params.cid);
+        const cart_item = await Cart.findById(req.params.cid);
+        // // console.log("cart_item : " , cart_item)
         // cart_item.cart_items.forEach(item => {
         //     let notes_data = {}
-        //     notes_data.
+        //     notes_data.product_name = item.product_id.name ;
+        //     notes_data.quantity = item.quantity ;
+        //     notes_data.fwatured_product_name = item.featured_product_id.flavour ;
         //     notes[m++] = notes_data;
         // });
+        // console.log(notes)
 
+        const instance_response = await instance.orders.create({
+            "amount": cart_item.total_cart_price * 100 ,
+            "currency": "INR",
+            "receipt": `receipt#${l}`,
+            "notes": notes
+        })
+        .catch(err => console.log(err))
         let data = req.body;
         data.cart_id = req.params.cid;
         data.user_id = req.user.id;
-        console.log(data,thisUser);
+        // console.log(data,thisUser);
         const cart = await Cart.findById({"_id": req.params.cid});
         if (!cart || cart.cart_items.length == 0) {
             return errorMessage(
@@ -48,7 +58,7 @@ const createOrder = async (req, res,) => {
         successMessage(
             res,
             "Order added successfuly",
-            data = addedOrder,
+            data = {addedOrder , instance_response},
         );
     }
     catch (error) {

@@ -5,7 +5,7 @@ const carts = new mongoose.Schema({
         product_id : {
             type: mongoose.SchemaTypes.ObjectId,
             ref: 'Product',
-            // autopopulate : true
+            autopopulate : true
         },
         quantity : {
             type:Number,
@@ -21,7 +21,7 @@ const carts = new mongoose.Schema({
         featured_product_id:{
             type: mongoose.SchemaTypes.ObjectId,
             ref: 'Featured_product',
-            // autopopulate : true
+            autopopulate : true
         },
     }],
     user_id : {
