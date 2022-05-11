@@ -18,43 +18,43 @@ const createOrder = async (req, res,) => {
         let l = orders.length + 1 , m =0;
         let notes = {} ;
         // pid , fpid , quantity for every item in the cart
-        const cart_item = await Cart.findById(req.params.cid);
-        // // console.log("cart_item : " , cart_item)
-        // cart_item.cart_items.forEach(item => {
-        //     let notes_data = {}
-        //     notes_data.product_name = item.product_id.name ;
-        //     notes_data.quantity = item.quantity ;
-        //     notes_data.fwatured_product_name = item.featured_product_id.flavour ;
-        //     notes[m++] = notes_data;
-        // });
-        // console.log(notes)
-
+        const cart_item = await Cart.findById(req.user.curr_cart);
         const instance_response = await instance.orders.create({
             "amount": cart_item.total_cart_price * 100 ,
             "currency": "INR",
             "receipt": `receipt#${l}`,
-            "notes": notes
+            "notes": notes,
+            "payment_capture" : 1,
         })
         .catch(err => console.log(err))
         let data = req.body;
-        data.cart_id = req.params.cid;
+        data.cart_id = req.user.curr_cart;
         data.user_id = req.user.id;
         // console.log(data,thisUser);
-        const cart = await Cart.findById({"_id": req.params.cid});
-        if (!cart || cart.cart_items.length == 0) {
+        if (!cart_item || cart_item.cart_items.length == 0) {
             return errorMessage(
                 res,
-                "Please check all the parameters are given and cart id is correct",
+                "The cart is empty please add items to the cart",
                 error,
             );
         }
 
         const addedOrder = await Order.create(data);
         thisUser.previous_orders.push(addedOrder._id);
+
+        const cart_data = {
+            user_id : thisUser._id,
+            curr_user_cart : true
+        };
+        cart_item.is_ordered = true;
+        cart_item.curr_cart = false;
+
+        await cart_item.save();
+
+        const newCart = await Cart.create(cart_data);
+        thisUser.curr_cart = newCart._id ;
         thisUser.save()
-        // order k andar wali cid -> cid.curr_cart_item = false
-        // cid.ordered = true
-        // logic to create new cart and assgin to req.user._id
+        console.log(thisUser);
         successMessage(
             res,
             "Order added successfuly",
@@ -164,9 +164,34 @@ const deleteOrderById = async (req, res,) => {
     }
 };
 
+const paynow = async (req,res) =>{
+    const secret = process.env.RAZORPAY_ORDER_CROSSCHECK_SECRET
+
+	console.log(req.body)
+
+	const crypto = require('crypto')
+
+	const shasum = crypto.createHmac('sha256', secret)
+	shasum.update(JSON.stringify(req.body))
+	const digest = shasum.digest('hex')
+
+	console.log(digest, req.headers['x-razorpay-signature'])
+
+	if (digest === req.headers['x-razorpay-signature']) {
+		console.log('request is legit')
+		// process it
+        //LOGIC TO UPDATE THAT PAYMENT IS DONE
+	} else {
+		// pass it
+        errorMessage(res,"PAYMENT NOT CAPTURED, PAY AGAIN !")
+	}
+	res.json({ status: 'ok' })
+}
+
 module.exports = {
     createOrder,
     getOrderById,
     updateOrderById,
     deleteOrderById,
+    paynow,
 }

@@ -12,7 +12,6 @@ const carts = new mongoose.Schema({
             required:true,
             deafault:1,
             min:1,
-
         },
         price_of_this_item : {
             type:Number,
@@ -28,7 +27,7 @@ const carts = new mongoose.Schema({
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'User',
         required : true,
-        autopopulate : true
+        // autopopulate : true
     },
     total_cart_price : {
         type:Number,

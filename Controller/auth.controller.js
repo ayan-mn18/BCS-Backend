@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { User } = require('../models');
+const { User, Cart } = require('../models');
 const { successMessage, errorMessage } = require('../Utils/responseSender.utils');
 const jwt = require('jsonwebtoken');
 
@@ -8,7 +8,13 @@ const registerUser = async (req,res) =>{
         req.body.password = await bcrypt.hash(req.body.password, 10);
         const registeredUser = await User.create(req.body);
         //LOGIC FOR CREATNG NEW CART
-
+        const data = {
+            user_id : registeredUser._id,
+            curr_user_cart : true
+        };
+        const newCart = await Cart.create(data);
+        registeredUser.curr_cart = newCart._id ;
+        await registeredUser.save();
         //data : {}
         //create cart : {}
         successMessage(

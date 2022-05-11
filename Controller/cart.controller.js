@@ -36,7 +36,7 @@ const getCart=async (req,res,)=>{
     
     try{
         
-        id=req.params.cid
+        id=req.user.curr_cart
         const gotCart = await Cart.findById(id);
 
         if(!gotCart){
@@ -109,7 +109,7 @@ const addProductToCart=async (req,res,)=>{
         if (!req.body.quantity ){
             return res.status(404).json({ message: "Please Mention The Quantity" });
         }
-        const crid=req.params.cid;
+        const crid=req.user.curr_cart;
         const fpid=req.params.fpid;
         const addedcart = await Cart.findOne({
             _id:crid,
@@ -172,7 +172,7 @@ const deleteProductFromCart=async (req,res,)=>{
             "price_of_this_item":product.price,
             
         };
-        const crid=req.params.cid;
+        const crid=req.user.curr_cart;
         const pid=req.params.pid;
         const fpid=req.params.fpid;
         const cproduct  = await Cart.findOneAndUpdate({
