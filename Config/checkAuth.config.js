@@ -12,7 +12,7 @@ const checkAuth = async (req, res, next) => {
         req.user = user[0];
         next();
       } else {
-        res.redirect("/");
+        errorMessage(res, "Email and Password did not match ");
       }
     }
   } catch (error) {
