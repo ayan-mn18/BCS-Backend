@@ -44,6 +44,7 @@ const loginUser = async (req, res) => {
       user_name: user.user_name,
       name: user.name,
       email: user.email,
+      is_admin: user.is_admin,
     };
     successMessage(
       res,
