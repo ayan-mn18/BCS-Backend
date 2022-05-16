@@ -13,6 +13,10 @@ const featured_product = new mongoose.Schema({
     type: String,
     required: true,
   },
+  benefits: {
+    type: String,
+    required: true,
+  },
   auth_code: {
     type: String,
     required: true,
