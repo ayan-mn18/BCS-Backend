@@ -16,7 +16,7 @@ const order = new mongoose.Schema({
     default: false,
   },
   payment_details: {
-    type: Object,
+    // type: Object,
   },
   address_line_1: {
     type: String,

@@ -1,9 +1,9 @@
+const { instance } = require("../Config");
 const { Cart, Order, User } = require("../models");
 const {
   successMessage,
   errorMessage,
 } = require("../Utils/responseSender.utils");
-const { instance } = require("../Config");
 
 const createOrder = async (req, res) => {
   try {
@@ -20,7 +20,7 @@ const createOrder = async (req, res) => {
     const cart_item = await Cart.findById(req.user.curr_cart);
     const instance_response = await instance.orders
       .create({
-        amount: cart_item.total_cart_price * 100,
+        amount: cart_item.discounted_cart_price * 100,
         currency: "INR",
         receipt: `receipt#${l}`,
         notes: notes,
@@ -30,7 +30,7 @@ const createOrder = async (req, res) => {
     let data = req.body;
     data.cart_id = req.user.curr_cart;
     data.user_id = req.user.id;
-    // console.log(data,thisUser);
+    data.payment_details = instance_response;
     if (!cart_item || cart_item.cart_items.length == 0) {
       return errorMessage(
         res,
@@ -41,7 +41,8 @@ const createOrder = async (req, res) => {
 
     const addedOrder = await Order.create(data);
     thisUser.previous_orders.push(addedOrder._id);
-
+    // addedOrder.payment_details = instance_response;
+    // await addedOrder.save();
     const cart_data = {
       user_id: thisUser._id,
       curr_user_cart: true,
@@ -54,7 +55,6 @@ const createOrder = async (req, res) => {
     const newCart = await Cart.create(cart_data);
     thisUser.curr_cart = newCart._id;
     thisUser.save();
-    console.log(thisUser);
     successMessage(
       res,
       "Order added successfuly",

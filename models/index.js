@@ -4,6 +4,7 @@ const Product = require('./Product');
 const Reviews = require('./Reviews');
 const Order = require('./Order');
 const Featured_product = require('./Featured_product');
+const Resource = require('./Resource');
 
 
 module.exports = {
@@ -13,4 +14,5 @@ module.exports = {
     Reviews,
     Order,
     Featured_product,
+    Resource,
 }

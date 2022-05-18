@@ -6,6 +6,7 @@ const reviewRoutes=require('./reviews.routes')
 const featureproductRoutes=require('./featured_product.routes')
 const cartRoutes=require('./cart.routes')
 const orderRoutes=require('./order.routes')
+const resourceRoutes=require('./resource.routes')
 
 const router = express.Router();
 
@@ -37,6 +38,10 @@ const defaultRoutes = [
     {
         path: '/orders',
         route: orderRoutes,
+    }, 
+    {
+        path: '/resource',
+        route: resourceRoutes,
     }, 
 ];
 
