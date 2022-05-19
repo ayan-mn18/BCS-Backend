@@ -1,4 +1,4 @@
-const { instance } = require("../config");
+const { instance } = require("../Config");
 const { Cart, Order, User } = require("../models");
 const {
   successMessage,

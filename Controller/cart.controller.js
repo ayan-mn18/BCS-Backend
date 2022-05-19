@@ -5,7 +5,7 @@ const {
 } = require("../Utils/responseSender.utils");
 const { path } = require("path");
 const { cloudinary } = require("../Utils/cloudinary");
-const updateCartPrice = require("../config/checkUpdates");
+const updateCartPrice = require("../Config/checkUpdates");
 
 const getAllCarts = async (req, res) => {
   try {

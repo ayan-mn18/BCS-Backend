@@ -1,6 +1,6 @@
 const express = require("express");
-const { isAuthenticated, isAdmin } = require("../config");
-const is_Admin = require("../config/isAdmin.config");
+const { isAuthenticated, isAdmin } = require("../Config");
+const is_Admin = require("../Config/isAdmin.config");
 const {
   createOrder,
   getOrderById,
