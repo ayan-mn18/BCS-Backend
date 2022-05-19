@@ -3,7 +3,7 @@ const { Cart, Order, User } = require("../models");
 const {
   successMessage,
   errorMessage,
-} = require("../Utils/responseSender.utils");
+} = require("../utilf/responseSender.utils");
 
 const createOrder = async (req, res) => {
   try {

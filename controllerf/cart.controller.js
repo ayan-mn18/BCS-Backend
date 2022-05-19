@@ -2,9 +2,9 @@ const { Product, Cart, Featured_product } = require("../models");
 const {
   successMessage,
   errorMessage,
-} = require("../Utils/responseSender.utils");
+} = require("../utilf/responseSender.utils");
 const { path } = require("path");
-const { cloudinary } = require("../Utils/cloudinary");
+const { cloudinary } = require("../utilf/cloudinary");
 const updateCartPrice = require("../configf/checkUpdates");
 
 const getAllCarts = async (req, res) => {

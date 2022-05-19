@@ -1,6 +1,6 @@
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
-const { errorMessage } = require("../Utils/responseSender.utils");
+const { errorMessage } = require("../utilf/responseSender.utils");
 
 const checkAuth = async (req, res, next) => {
   try {

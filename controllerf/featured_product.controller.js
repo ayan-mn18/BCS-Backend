@@ -2,8 +2,8 @@ const { Product, Featured_product } = require("../models");
 const {
   successMessage,
   errorMessage,
-} = require("../Utils/responseSender.utils");
-const { cloudinary } = require("../Utils/cloudinary");
+} = require("../utilf/responseSender.utils");
+const { cloudinary } = require("../utilf/cloudinary");
 
 const addFeaturedProduct = async (req, res) => {
   try {
