@@ -1,13 +1,13 @@
 const express = require("express");
-const { isAuthenticated, isAdmin } = require("../Config");
-const is_Admin = require("../Config/isAdmin.config");
+const { isAuthenticated, isAdmin } = require("../config");
+const is_Admin = require("../config/isAdmin.config");
 const {
   getProduct,
   addProduct,
   getProductById,
   deleteProductById,
   updateProductById,
-} = require("../Controller/product.controller");
+} = require("../controller/product.controller");
 const cloudinary = require("../Utils/cloudinary");
 const { upload } = require("../Utils/multer");
 
