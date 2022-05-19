@@ -3,7 +3,7 @@ const { User, Cart } = require("../models");
 const {
   successMessage,
   errorMessage,
-} = require("../Utils/responseSender.utils");
+} = require("../utilf/responseSender.utils");
 const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res) => {

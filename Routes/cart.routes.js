@@ -8,7 +8,7 @@ const {
   addProductToCart,
   deleteProductFromCart,
 } = require("../controller/cart.controller");
-const { upload } = require("../Utils/multer");
+const { upload } = require("../utilf/multer");
 
 const router = express.Router();
 

@@ -8,8 +8,8 @@ const {
   deleteProductById,
   updateProductById,
 } = require("../controller/product.controller");
-const cloudinary = require("../Utils/cloudinary");
-const { upload } = require("../Utils/multer");
+const cloudinary = require("../utilf/cloudinary");
+const { upload } = require("../utilf/multer");
 
 const router = express.Router();
 

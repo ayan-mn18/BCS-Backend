@@ -2,7 +2,7 @@ const { User, Cart } = require("../models");
 const {
   errorMessage,
   successMessage,
-} = require("../Utils/responseSender.utils");
+} = require("../utilf/responseSender.utils");
 
 const allUser = async (req, res) => {
   try {
