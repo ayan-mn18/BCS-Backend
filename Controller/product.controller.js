@@ -3,8 +3,8 @@ const { path } = require("path");
 const {
   successMessage,
   errorMessage,
-} = require("../Utils/responseSender.utils");
-const { cloudinary } = require("../Utils/cloudinary");
+} = require("../utils/responseSender.utils");
+const { cloudinary } = require("../utils/cloudinary");
 
 const getProduct = async (req, res) => {
   try {
