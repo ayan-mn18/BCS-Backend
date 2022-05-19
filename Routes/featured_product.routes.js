@@ -6,7 +6,7 @@ const {
   getFeaturedProductById,
   updateFeaturedProductById,
   deleteFeaturedProductById,
-} = require("../controller/featured_product.controller");
+} = require("../controllerf/featured_product.controller");
 const { upload } = require("../utilf/multer");
 
 const router = express.Router();

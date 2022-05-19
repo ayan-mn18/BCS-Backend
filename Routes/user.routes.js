@@ -7,7 +7,7 @@ const {
   allUser,
   updateUser,
   getUser,
-} = require("../controller/user.controller");
+} = require("../controllerf/user.controller");
 const router = express.Router();
 
 router.get("/alluser", isAuthenticated, is_Admin, allUser);

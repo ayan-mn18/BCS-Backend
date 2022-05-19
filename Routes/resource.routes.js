@@ -4,7 +4,7 @@ const {
   createResource,
   getResource,
   updateResource,
-} = require("../controller/resources.controller");
+} = require("../controllerf/resources.controller");
 
 const router = express.Router();
 

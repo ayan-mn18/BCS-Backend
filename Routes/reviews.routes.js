@@ -10,7 +10,7 @@ const {
   deleteReview,
   getReviewsByUserId,
   getReviewsByReviewId,
-} = require("../controller/reviews.controller");
+} = require("../controllerf/reviews.controller");
 
 const router = express.Router();
 

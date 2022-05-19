@@ -7,7 +7,7 @@ const {
   getProductById,
   deleteProductById,
   updateProductById,
-} = require("../controller/product.controller");
+} = require("../controllerf/product.controller");
 const cloudinary = require("../utilf/cloudinary");
 const { upload } = require("../utilf/multer");
 

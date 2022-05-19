@@ -8,7 +8,7 @@ const {
   deleteOrderById,
   paynow,
   getAllOrder,
-} = require("../controller/Order.controller");
+} = require("../controllerf/Order.controller");
 
 const router = express.Router();
 

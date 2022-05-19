@@ -6,7 +6,7 @@ const checkAuth = async (req, res, next) => {
   try {
     const user = await User.find({ email: req.body.email });
     if (user.length === 0) {
-      errorMessage(res, "Email ID is not registered ");
+      errorMessage(res, "Email ID is not registered");
     } else {
       if (await bcrypt.compare(req.body.password, user[0].password)) {
         req.user = user[0];
