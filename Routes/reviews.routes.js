@@ -1,6 +1,6 @@
 const express = require("express");
 const { route } = require("express/lib/application");
-const { isAuthenticated } = require("../config");
+const { isAuthenticated } = require("../configf");
 const {
   getReviews,
   addReviews,

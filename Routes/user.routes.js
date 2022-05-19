@@ -1,6 +1,6 @@
 const express = require("express");
-const { isAuthenticated } = require("../config");
-const is_Admin = require("../config/isAdmin.config");
+const { isAuthenticated } = require("../configf");
+const is_Admin = require("../configf/isAdmin.config");
 
 const {
   deleteUser,

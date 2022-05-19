@@ -1,5 +1,5 @@
 const express = require("express");
-const { isAuthenticated, isAdmin } = require("../config");
+const { isAuthenticated, isAdmin } = require("../configf");
 const {
   createResource,
   getResource,
