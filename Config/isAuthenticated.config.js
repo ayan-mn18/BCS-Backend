@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
-const { errorMessage } = require("../utils/responseSender.utils");
+const { errorMessage } = require("../Utils/responseSender.utils");
 
 const isAuthenticated = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
