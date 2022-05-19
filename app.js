@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const { db, isAuthenticated } = require("./configf");
 const router = require("./Routes");
 const cloudinary = require("cloudinary");
+const cors = require("cors");
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ const PORT = process.env.PORT;
 const app = express();
 
 app.use(morgan("dev"));
+app.use(cors());
 app.use(bd.urlencoded({ extended: false }));
 app.use(bd.json());
 app.use("/api", router);
