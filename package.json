@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start" : "node app.js",
-    "heroku-postbuild": "npm install --prefix node app.js"
+    "heroku-postbuild": "node app.js"
   },
   "keywords": [],
   "author": "",
