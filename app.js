@@ -21,7 +21,7 @@ app.use(bd.json());
 app.use("/api", router);
 
 app.get("/", (req, res) => {
-  res.send("Hello Innitial App");
+  res.send("Hello Innitial App ");
 });
 
 app.get("/home", isAuthenticated, (req, res) => {
