@@ -15,7 +15,7 @@ const {
 const router = express.Router();
 
 router.post("/:pid", isAuthenticated, addReviews);
-router.get("/:pid", isAuthenticated, getReviews);
+router.get("/:pid", getReviews);
 router.get("/:pid/:rid", isAuthenticated, getReviewsByReviewId);
 router.put("/:pid/:rid", isAuthenticated, updateReview);
 router.delete("/:pid/:rid", isAuthenticated, deleteReview);
