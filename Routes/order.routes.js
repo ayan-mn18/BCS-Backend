@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.post("/createorder", isAuthenticated, createOrder);
 router.post("/getallorder", isAuthenticated, getAllOrder);
-router.post("/paynow", isAuthenticated, paynow);
+router.post("/paynow", paynow);
 router.get("/:oid", isAuthenticated, getOrderById);
 router.patch("/:oid", isAuthenticated, updateOrderById);
 router.delete("/:oid", isAuthenticated, deleteOrderById);
