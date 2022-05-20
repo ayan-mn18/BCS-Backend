@@ -144,27 +144,31 @@ const deleteOrderById = async (req, res) => {
 };
 
 const paynow = async (req, res) => {
-  const secret = process.env.RAZORPAY_ORDER_CROSSCHECK_SECRET;
+  try {
+    const secret = process.env.RAZORPAY_ORDER_CROSSCHECK_SECRET;
 
-  console.log(req.body);
+    console.log(req.body);
 
-  const crypto = require("crypto");
+    const crypto = require("crypto");
 
-  const shasum = crypto.createHmac("sha256", secret);
-  shasum.update(JSON.stringify(req.body));
-  const digest = shasum.digest("hex");
+    const shasum = crypto.createHmac("sha256", secret);
+    shasum.update(JSON.stringify(req.body));
+    const digest = shasum.digest("hex");
 
-  console.log(digest, req.headers["x-razorpay-signature"]);
+    console.log(digest, req.headers["x-razorpay-signature"]);
 
-  if (digest === req.headers["x-razorpay-signature"]) {
-    console.log("request is legit");
-    // process it
-    //LOGIC TO UPDATE THAT PAYMENT IS DONE
-  } else {
-    // pass it
-    errorMessage(res, "PAYMENT NOT CAPTURED, PAY AGAIN !");
+    if (digest === req.headers["x-razorpay-signature"]) {
+      console.log("request is legit");
+      // process it
+      //LOGIC TO UPDATE THAT PAYMENT IS DONE
+    } else {
+      // pass it
+      errorMessage(res, "PAYMENT NOT CAPTURED, PAY AGAIN !");
+    }
+    res.json({ status: "ok" });
+  } catch (error) {
+    console.log(error);
   }
-  res.json({ status: "ok" });
 };
 
 module.exports = {
