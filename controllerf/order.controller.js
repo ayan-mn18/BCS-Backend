@@ -164,7 +164,7 @@ const paynow = async (req, res) => {
       //LOGIC TO UPDATE THAT PAYMENT IS DONE
       const order_id = req.body.payload.payment.entity.order_id ;
       console.log(order_id)
-      const order_details = await Order.findOne({"payment_details.order_id" : order_id });
+      const order_details = await Order.findOne({"payment_details.id" : order_id });
       order_details.payment_done = true;
       await order_details.save();
     } else {
