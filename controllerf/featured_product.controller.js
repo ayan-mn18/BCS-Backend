@@ -117,8 +117,7 @@ const updateFeaturedProductById = async (req, res) => {
 
     // }
     //CHECK PHOTO UPDATE CODE .
-
-    if (req.files) {
+    if (req.files.length) {
       const urls = [];
       const files = req.files;
       for (const file of files) {

@@ -13,7 +13,6 @@ const isAuthenticated = async (req, res, next) => {
   jwt.verify(token, process.env.ACCESS_TOKEN, async (error, user) => {
     if (error) errorMessage(res, "Try loging in again .", error);
     const userDetails = await User.find({ email: user.email });
-    console.log(userDetails[0]);
     req.user = userDetails[0];
     next();
   });
