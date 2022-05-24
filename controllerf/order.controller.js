@@ -154,8 +154,7 @@ const paynow = async (req, res) => {
     const shasum = crypto.createHmac("sha256", secret);
     shasum.update(JSON.stringify(req.body));
     const digest = shasum.digest("hex");
-    let data = digest.digest('utf-8').payload;
-    console.log(data);
+    
 
     console.log(digest, req.headers["x-razorpay-signature"]);
 
@@ -163,6 +162,11 @@ const paynow = async (req, res) => {
       console.log("request is legit");
       // process it
       //LOGIC TO UPDATE THAT PAYMENT IS DONE
+      const order_id = req.body.payload.payment.entity.order_id ;
+      console.log(order_id)
+      const order_details = await Order.findOne({"payment_details.order_id" : order_id });
+      order_details.payment_done = true;
+      await order_details.save();
     } else {
       // pass it
       errorMessage(res, "PAYMENT NOT CAPTURED, PAY AGAIN !");
