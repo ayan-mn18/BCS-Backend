@@ -154,6 +154,8 @@ const paynow = async (req, res) => {
     const shasum = crypto.createHmac("sha256", secret);
     shasum.update(JSON.stringify(req.body));
     const digest = shasum.digest("hex");
+    let data = digest.digest('utf-8').payload;
+    console.log(data);
 
     console.log(digest, req.headers["x-razorpay-signature"]);
 
