@@ -14,7 +14,6 @@ const addFeaturedProduct = async (req, res) => {
 
     const urls = [];
     const files = req.files;
-    console.log("files", files);
     for (const file of files) {
       const { path } = file;
       const newPath = await cloudinary.uploader.upload(path);
@@ -23,8 +22,8 @@ const addFeaturedProduct = async (req, res) => {
     if (urls.length == 0) {
       return errorMessage(res, "Please give photos for the featured products");
     }
-    let data = req.body;
-    data.url = urls;
+    let { flavour , description , ingredients , auth_code , url , discounted_price , price , benefits  } = req.body;
+    url = urls;
     // const result = await cloudinary.uploader.upload(req.file.path);
     // console.log(result)
     // if(!result){
@@ -43,10 +42,10 @@ const addFeaturedProduct = async (req, res) => {
         .status(404)
         .json({ message: "Product Does Not Exist Please check Product id" });
     }
-
-    const newProduct = new Featured_product(req.body);
-
+    let newProduct ;
+    
     try {
+      newProduct = new Featured_product(req.body);
       const addedProduct = await newProduct.save();
     } catch (err) {
       res.status(500).json(err);
