@@ -51,6 +51,9 @@ const order = new mongoose.Schema({
     default: false,
     required: true,
   },
+  shipping_response : {
+
+  }
 });
 
 order.plugin(require("mongoose-autopopulate"));

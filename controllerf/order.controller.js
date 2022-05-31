@@ -4,6 +4,8 @@ const {
   successMessage,
   errorMessage,
 } = require("../utilf/responseSender.utils");
+const axios = require('axios');
+const { response } = require("express");
 
 const createOrder = async (req, res) => {
   try {
@@ -12,25 +14,8 @@ const createOrder = async (req, res) => {
       return errorMessage(res, "User does not exist!!", error);
     }
 
-    const orders = await Order.find({});
-    let l = orders.length + 1,
-      m = 0;
-    let notes = {};
-    // pid , fpid , quantity for every item in the cart
     const cart_item = await Cart.findById(req.user.curr_cart);
-    const instance_response = await instance.orders
-      .create({
-        amount: cart_item.discounted_cart_price * 100,
-        currency: "INR",
-        receipt: `receipt#${l}`,
-        notes: notes,
-        payment_capture: 1,
-      })
-      .catch((err) => console.log(err));
-    let data = req.body;
-    data.cart_id = req.user.curr_cart;
-    data.user_id = req.user.id;
-    data.payment_details = instance_response;
+  
     if (!cart_item || cart_item.cart_items.length == 0) {
       return errorMessage(
         res,
@@ -38,6 +23,10 @@ const createOrder = async (req, res) => {
         error
       );
     }
+
+    let data = req.body;
+    data.cart_id = req.user.curr_cart;
+    data.user_id = req.user.id;
 
     const addedOrder = await Order.create(data);
     thisUser.previous_orders.push(addedOrder._id);
@@ -58,7 +47,7 @@ const createOrder = async (req, res) => {
     successMessage(
       res,
       "Order added successfuly",
-      (data = { addedOrder, instance_response })
+      (data = { addedOrder })
     );
   } catch (error) {
     errorMessage(
@@ -143,12 +132,45 @@ const deleteOrderById = async (req, res) => {
   }
 };
 
+const createRazorpayOrderInstance = async (req, res) => {
+  try {
+    const orders = await Order.find({payment_done : true});
+    let l = orders.length + 1;
+    let notes = {};
+    // pid , fpid , quantity for every item in the cart
+    const cart_item = await Cart.findById(req.user.curr_cart);
+    const instance_response = await instance.orders
+      .create({
+        amount: cart_item.discounted_cart_price * 100,
+        currency: "INR",
+        receipt: `receipt#${l}`,
+        notes: notes,
+        payment_capture: 1,
+      })
+      .catch((err) => console.log(err));
+
+    const orderDetails = await Order.findById(req.params.oid);
+    orderDetails.payment_details = instance_response;
+    await orderDetails.save();
+
+    successMessage(
+      res,
+      "Order Instance created successfully",
+      data={orderDetails , instance_response}
+    )
+  } catch (error) {
+    errorMessage(
+      res,
+      "Error While Creating THe Instance",
+      error
+    )
+  }
+}
+
 const paynow = async (req, res) => {
   try {
+
     const secret = process.env.RAZORPAY_ORDER_CROSSCHECK_SECRET;
-
-    console.log(req.body);
-
     const crypto = require("crypto");
 
     const shasum = crypto.createHmac("sha256", secret);
@@ -177,6 +199,63 @@ const paynow = async (req, res) => {
   }
 };
 
+const createShippingOrderCOD = async(req, res) =>{
+  try {
+    // const data = req.body;
+    const user_email = process.env.SHIPROCKET_USER;
+    const user_password = process.env.SHIPROCKET_PASSWORD;
+    let token;
+    const response = await axios({
+      method : 'post',
+      url : 'https://apiv2.shiprocket.in/v1/external/auth/login',
+      data : {
+        email : user_email,
+        password : user_password
+      }
+    })
+    .catch(error => console.error(error));
+    token = response.data.token;
+    if(!token){
+      throw new Error("TOken Not Found Please Try Again");
+    }
+    const finalResponse = await axios({
+      method : 'POST',
+      url : 'https://apiv2.shiprocket.in/v1/external/orders/create/adhoc',
+      Authorization : `Bearer ${token}`,
+      data : req.body ,
+    }).catch(error => console.error(error));
+
+    const orderDetails = await Order.findById(req.body.mongoOID);
+    orderDetails.shipping_response = finalResponse;
+    await orderDetails.save();
+
+    successMessage(
+      res,
+      "Shipping For COD is being created , Happy SHopping :)",
+      data = finalResponse
+    )
+  } catch (error) {
+    errorMessage(
+      res,
+      "Error in creating COD Shipping",
+      error
+    )
+  }
+}
+
+const createShippingOrderPrepaid = async(req, res) =>{
+
+}
+
+// Order is created
+// Two options are available 
+// a) COD
+// b) Pay now
+// COD => Call The COD API STart the process ✅.
+// Paynow => Firstly Call The paynow API to get the payment Done ✅.
+//        => Then Create THe shipping ORder and get the process started ✅(kindOfNotsure).
+
+
 module.exports = {
   createOrder,
   getOrderById,
@@ -184,4 +263,6 @@ module.exports = {
   deleteOrderById,
   paynow,
   getAllOrder,
+  createShippingOrderCOD,
+  createRazorpayOrderInstance,
 };

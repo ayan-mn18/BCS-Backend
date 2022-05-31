@@ -8,11 +8,13 @@ const {
   deleteOrderById,
   paynow,
   getAllOrder,
+  createShippingOrderCOD,
 } = require("../controllerf/order.controller");
 
 const router = express.Router();
 
 router.post("/createorder", isAuthenticated, createOrder);
+router.post("/createorder/shipping/cod", isAuthenticated, createShippingOrderCOD);
 router.post("/getallorder", isAuthenticated, getAllOrder);
 router.post("/paynow", paynow);
 router.get("/:oid", isAuthenticated, getOrderById);
