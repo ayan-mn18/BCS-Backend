@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 const { User, Cart } = require("../models");
 const {
   errorMessage,
@@ -20,8 +22,11 @@ const allUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const updates = req.body;
+    if(updates.password){
+      updates.password = await bcrypt.hash(req.body.password, 10);
+    }
     const user = await User.findByIdAndUpdate(
-      req.params.uid,
+      req.user.id,
       { $set: updates },
       { new: true }
     );

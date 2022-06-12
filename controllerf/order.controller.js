@@ -61,7 +61,7 @@ const createOrder = async (req, res) => {
 const getAllOrder = async (req, res) => {
   try {
     const orders = await Order.find({});
-    successMessage(res, "Order added successfuly", (data = { orders }));
+    successMessage(res, "Order added successfuly", data = { orders });
   } catch (error) {
     errorMessage(
       res,

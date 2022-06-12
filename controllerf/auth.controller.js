@@ -36,7 +36,6 @@ const loginUser = async (req, res) => {
       user_name,
       name,
     };
-    console.log(req.body);
     const accessToken = jwt.sign(jwtUser, process.env.ACCESS_TOKEN);
     const user = req.user;
     const data = {
@@ -68,6 +67,14 @@ const alluser = async (req, res) => {
     errorMessage(res, "message", error);
   }
 };
+
+// POST /create-dummy-user
+// => From Frontend 
+// => Create A dummmy User
+// =>  
+
+// PATCH /edit-dummy-users-detail
+// => EMAIL , PASSWORD , NAME , USERNAME  
 
 module.exports = {
   registerUser,
