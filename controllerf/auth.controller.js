@@ -18,9 +18,7 @@ const registerUser = async (req, res) => {
     const newCart = await Cart.create(data);
     registeredUser.curr_cart = newCart._id;
     await registeredUser.save();
-    // req.user = registeredUser;
-    //data : {}
-    //create cart : {}
+
     successMessage(res, "User registered successfully", registeredUser);
   } catch (error) {
     errorMessage(res, "Registration Unsuccessful , Please try again !", error);
@@ -48,7 +46,7 @@ const loginUser = async (req, res) => {
     successMessage(
       res,
       "Here's your auth token for login into the the app",
-      data
+      {data , user}
     );
   } catch (error) {
     errorMessage(
