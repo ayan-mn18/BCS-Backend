@@ -22,15 +22,15 @@ const checkAuth = async (req, res, next) => {
       const newCart = await Cart.create(data);
       user.curr_cart = newCart._id;
       await user.save();
-      // console.log(user)
     }else{
       user = await User.findOne({ email: req.body.email });
     }
     if (!user.id) {
       errorMessage(res, "Email ID is not registered");
     } else {
-      console.log(req.body.password || dummyPassword , user.password)
-      if (await bcrypt.compare(req.body.password || dummyPassword , user.password)) {
+      let userLoginPassword = (req.body.password);
+      console.log(userLoginPassword || dummyPassword , user.password)
+      if (await bcrypt.compare((userLoginPassword).toString() || dummyPassword , user.password)) {
         req.user = user;
         next();
       } else {
@@ -38,11 +38,12 @@ const checkAuth = async (req, res, next) => {
       }
     }
   } catch (error) {
+    console.log(error)
     res
       .json({
         note: "Email ID and Password DID NOT MATCH",
-      })
-      .redirect("/");
+        error : error.message
+      });
   }
 };
 

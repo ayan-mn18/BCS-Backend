@@ -192,9 +192,37 @@ const deleteFeaturedProductById = async (req, res) => {
   }
 };
 
+const changeStockSettings = async (req , res) => {
+  try {
+    const featured_product = await Featured_product.findById(req.params.fpid);
+    if(!featured_product){
+      errorMessage(
+        res ,
+        "Please provide proper featured product ID",
+        null
+      );
+    }
+    let cond = featured_product.isInStock ;
+    featured_product.isInStock = !cond ;
+    await featured_product.save();
+    successMessage(
+      res,
+      cond ? "Product out of stock" : "Product is in stock" ,
+      data = featured_product ,
+    )
+  } catch (error) {
+    errorMessage(
+      res ,
+      "Please provide proper featured product ID",
+      error,
+    );
+  }
+};
+
 module.exports = {
   addFeaturedProduct,
   getFeaturedProductById,
   updateFeaturedProductById,
   deleteFeaturedProductById,
+  changeStockSettings,
 };

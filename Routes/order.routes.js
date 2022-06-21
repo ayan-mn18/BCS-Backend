@@ -14,8 +14,8 @@ const {
 const router = express.Router();
 
 router.post("/createorder", isAuthenticated, createOrder);
+router.get("/getallorders", getAllOrder);
 router.post("/createorder/shipping/cod", isAuthenticated, createShippingOrderCOD);
-router.post("/getallorder", isAuthenticated, getAllOrder);
 router.post("/paynow", paynow);
 router.get("/:oid", isAuthenticated, getOrderById);
 router.patch("/:oid", isAuthenticated, updateOrderById);

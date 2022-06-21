@@ -6,11 +6,13 @@ const {
   getFeaturedProductById,
   updateFeaturedProductById,
   deleteFeaturedProductById,
+  changeStockSettings,
 } = require("../controllerf/featured_product.controller");
 const { upload } = require("../utilf/multer");
 
 const router = express.Router();
 
+router.get("/:fpid/outofstock" , isAuthenticated , isAdmin , changeStockSettings );
 router.post(
   "/:pid",
   isAuthenticated,
@@ -33,5 +35,6 @@ router.delete(
   upload.array("url"),
   deleteFeaturedProductById
 );
+
 
 module.exports = router;

@@ -42,6 +42,11 @@ const featured_product = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  isInStock : {
+    type : Boolean ,
+    required : true ,
+    default : true 
+  }
 });
 featured_product.plugin(require("mongoose-autopopulate"));
 
