@@ -9,7 +9,7 @@ const order = new mongoose.Schema({
   user_id: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: "User",
-    autopopulate: true,
+    // autopopulate: true,
   },
   payment_done: {
     type: Boolean,

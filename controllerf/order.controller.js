@@ -60,8 +60,9 @@ const createOrder = async (req, res) => {
 
 const getAllOrder = async (req, res) => {
   try {
-    const orders = await Order.find().limit(10);
-    successMessage(res, "Orders found successfuly", orders);
+    console.log("first")
+    const orders = await Order.find();
+    successMessage(res, "Orders found successfuly", data = orders);
   } catch (error) {
     errorMessage(
       res,
