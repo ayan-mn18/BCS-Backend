@@ -30,6 +30,11 @@ const order = new mongoose.Schema({
     type: String,
     // required: true
   },
+  country: {
+    type : String ,
+    required : true ,
+    default : 'India'
+  },
   state: {
     type: String,
     // required: true
@@ -53,6 +58,11 @@ const order = new mongoose.Schema({
   },
   shipping_response : {
 
+  },
+  payment_method : {
+    type : String,
+    enum : ['COD' , 'prepaid'] ,
+    required : true
   }
 });
 

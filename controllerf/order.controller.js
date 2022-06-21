@@ -44,6 +44,76 @@ const createOrder = async (req, res) => {
     const newCart = await Cart.create(cart_data);
     thisUser.curr_cart = newCart._id;
     thisUser.save();
+
+    if( req.body.payment_method === 'COD' ) {
+      const user_email = process.env.SHIPROCKET_USER;
+      const user_password = process.env.SHIPROCKET_PASSWORD;
+      let token;
+      const response = await axios({
+        method : 'post',
+        url : 'https://apiv2.shiprocket.in/v1/external/auth/login',
+        data : {
+          email : user_email,
+          password : user_password
+        }
+      })
+      .catch(error => console.error(error));
+      token = response.data.token;
+      if(!token){
+        throw new Error("TOken Not Found Please Try Again");
+      }
+      const {city , pincode , state, country, address_line_1, } = addedOrder ;
+      const { email , phone , name } = thisUser ;
+      let order_items = [];
+      addedOrder.cart_items.map((item) =>{
+        const item_data = {
+          name : item.product_id.name ,
+          sku : " ",
+          units : item.quantity ,
+          selling_price : item.featured_product_id.discounted_price ,
+        }
+        order_items.push(item_data);
+      })
+      let shipping_data = {
+        "order_id": addedOrder._id,
+        "order_date": Date.now(),
+        "pickup_location": process.env.SHIPROCKET_PICKUP_LOCATION,
+        "billing_customer_name": thisUser.name,
+        "billing_city": city,
+        "billing_pincode": pincode,
+        "billing_state": state,
+        "billing_country": country,
+        "billing_email": email,
+        "billing_phone": phone,
+        "shipping_is_billing": true ,
+        "shipping_customer_name": name ,
+        "shipping_address": address_line_1,
+        "shipping_city": city ,
+        "shipping_pincode": pincode,
+        "shipping_country": country,
+        "shipping_state": state,
+        "shipping_email": email,
+        "shipping_phone": phone,
+        "order_items": order_items,
+        "payment_method": 'COD',
+        "sub_total": cart_data.discounted_cart_price,
+        "length": 10,
+        "breadth": 10,
+        "height": 10,
+        "weight": 1,
+    }
+      console.log(shipping_data)
+      const finalResponse = await axios({
+        method : 'POST',
+        url : 'https://apiv2.shiprocket.in/v1/external/orders/create/adhoc',
+        Authorization : `Bearer ${token}`,
+        data : shipping_data ,
+      }).catch(error => console.error(error));
+  
+      addedOrder.shipping_response = finalResponse;
+      await addedOrder.save();
+    }
+
     successMessage(
       res,
       "Order added successfuly",
