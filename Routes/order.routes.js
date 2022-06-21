@@ -20,5 +20,6 @@ router.post("/paynow", paynow);
 router.get("/:oid", isAuthenticated, getOrderById);
 router.patch("/:oid", isAuthenticated, updateOrderById);
 router.delete("/:oid", isAuthenticated, deleteOrderById);
+router.post("/create-shipping-order" , )
 
 module.exports = router;

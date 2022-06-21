@@ -28,9 +28,9 @@ const checkAuth = async (req, res, next) => {
     if (!user.id) {
       errorMessage(res, "Email ID is not registered");
     } else {
-      let userLoginPassword = (req.body.password);
+      let userLoginPassword = req.body.password ? (req.body.password).toString() : null ;
       console.log(userLoginPassword || dummyPassword , user.password)
-      if (await bcrypt.compare((userLoginPassword).toString() || dummyPassword , user.password)) {
+      if (await bcrypt.compare(userLoginPassword|| dummyPassword , user.password)) {
         req.user = user;
         next();
       } else {
