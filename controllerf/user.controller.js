@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 const { User, Cart } = require("../models");
 const {
@@ -22,7 +22,7 @@ const allUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const updates = req.body;
-    if(updates.password){
+    if (updates.password) {
       updates.password = await bcrypt.hash(req.body.password, 10);
     }
     const user = await User.findByIdAndUpdate(
@@ -58,9 +58,23 @@ const getUser = async (req, res) => {
   }
 };
 
+const getUserById = async (req, res) => {
+  try {
+    const id = req.params.uid;
+    const user = await User.findById(id);
+    if (!user) {
+      return errorMessage(res, "user does not exist please check id", error);
+    }
+    successMessage(res, "User deleted Successfully", user);
+  } catch (error) {
+    errorMessage(res, "ERROR USER DETAILS NT FOUND ", error);
+  }
+};
+
 module.exports = {
   deleteUser,
   allUser,
   updateUser,
   getUser,
+  getUserById,
 };
